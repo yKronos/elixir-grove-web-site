@@ -216,11 +216,11 @@
                                 <nav>
                                     <ul>
                                         <li>
-                                            <a href="Elixir Grove.html" class="active">Home</a>
+                                            <a href="Elixir Grove.html">Home</a>
                                         </li>
     
                                         <li class="mega_items">
-                                            <a href="scents.html">Scents <i class="fa fa-angle-down"></i></a>
+                                            <a href="scents.html" class="active">Scents <i class="fa fa-angle-down"></i></a>
                                             <div class="mega_menu">
                                                 <ul class="mega_menu_inner">
                                                     <li>
@@ -371,56 +371,96 @@
         </div>
     </header>
 
-    <section class="slider_section slider_section2 mb-66">
-        <div class="slider_area owl-carousel">
-            <div class="single_slider d-flex align-items-center" data-bgimg="/images/banner/banner1.jpeg">
-                <div class="container">
-                    <div class="row">
-                        <div class="col-lg-6 col-md-7">
-                            <div class="slider_content slider_content2 content_right">
-                                <h1>Jean Paul Gaultier</h1>
-                                <h2>Le Beau Le Parfum</h2>
-                                <p>It's captivating to the point of sin. Straight from the Garden of Eden, the woody charm of this intense Eau de Parfum has only one desire: to seduce you. 
-                                    From the freshness of ginger to the wild sensuality of ambergris, and the enveloping power of sandalwood, this scent is sure to pull you in. The final touch: delicious tonka bean. 
-                                    You will fall in love.</p>
-                                    <a href="scents.html" class="button">Explore Scents <i class="fa fa-arrow-right"></i></a>
-                            </div>
-                        </div>
-                    </div>
+    <!-- Catalog Section -->
+    <section id="brands-section" class="content-section brands-section">
+        <div class="container">
+            <div class="section-header">
+                <h2>Scents</h2>
+                <p>Explore a database-backed perfume catalog by brand, scent family, audience, and longevity</p>
+            </div>
+
+            <div class="catalog-panel">
+                <div class="catalog-toolbar">
+                    <label class="catalog-search">
+                        <span>Search</span>
+                        <input id="catalog-search" type="search" placeholder="Search brand, perfume, type, or category">
+                    </label>
+
+                    <label>
+                        <span>Audience</span>
+                        <select id="gender-filter"></select>
+                    </label>
+
+                    <label>
+                        <span>Category</span>
+                        <select id="category-filter"></select>
+                    </label>
+
+                    <label>
+                        <span>Brand</span>
+                        <select id="brand-filter"></select>
+                    </label>
+
+                    <label>
+                        <span>Longevity</span>
+                        <select id="longevity-filter"></select>
+                    </label>
+                </div>
+
+                <div id="brand-chip-list" class="brand-chip-list" aria-label="Popular brands"></div>
+
+                <div class="catalog-status">
+                    <p id="catalog-summary">Loading scents...</p>
+                    <p class="catalog-source">Product data imported from the Kaggle CSV you provided and seeded into a local browser database.</p>
+                </div>
+
+                <div id="catalog-grid" class="catalog-grid" aria-live="polite"></div>
+
+                <div class="catalog-actions">
+                    <button id="catalog-load-more" class="catalog-load-more" type="button">Load more fragrances</button>
                 </div>
             </div>
 
-            <div class="single_slider d-flex align-items-center" data-bgimg="/images/banner/mutiny.jpg">
-                <div class="container">
-                    <div class="row">
-                        <div class="col-lg-6 offset-lg-6 col-md-6 offset-md-6">
-                            <div class="slider_content slider_content2 content_right">
-                                <h1>Maison Margiela</h1>
-                                <h2>Mutiny</h2>
-                                <p>The classic fragrance of tuberose has been reimagined and amplified with three distinct, potent notes, complemented by jasmine, orange blossom, and citrus for a magnetic, euphoric aroma. A leathery blend of saffron, oud, and vanilla adds a new dimension to the fragrance, creating a bold and unforgettable signature.
-                                </p>
-                                    <a href="scents.html" class="button">Explore Scents <i class="fa fa-arrow-right"></i></a>
-                            </div>
-                        </div>
-                    </div>
+            <div class="profile-panel">
+                <div>
+                    <h3>Your Scent Profile</h3>
+                    <p>Save local preferences for recommendations and wishlist behavior. This stays in your browser database.</p>
+                </div>
+
+                <div class="profile-controls">
+                    <label>
+                        <span>Preferred Brand</span>
+                        <select id="profile-brand"></select>
+                    </label>
+
+                    <label>
+                        <span>Preferred Category</span>
+                        <select id="profile-category"></select>
+                    </label>
+
+                    <label>
+                        <span>Preferred Audience</span>
+                        <select id="profile-gender"></select>
+                    </label>
+
+                    <label>
+                        <span>Preferred Longevity</span>
+                        <select id="profile-longevity"></select>
+                    </label>
+                </div>
+
+                <div class="profile-actions">
+                    <button id="profile-save" type="button">Save Profile</button>
+                    <p id="profile-status">Wishlist items are saved locally.</p>
                 </div>
             </div>
 
-            <div class="single_slider d-flex align-items-center" data-bgimg="/images/banner/test.jpg">
-                <div class="container">
-                    <div class="row">
-                        <div class="col-lg-6 offset-lg-6 col-md-6 offset-md-6">
-                            <div class="slider_content slider_content2 content_left">
-                                <h1>Kilian</h1>
-                                <h2>Angel's Share </h2>
-                                <p>The bottle of the perfumes of THE LIQUORS collection is styled as a speakeasy essential, 
-                                    like art deco glasses to recall the most fabulous bars. The weighted glass is engraved with the emblematic K motif to throw and catch light at all angles, finished with a golden, 
-                                    diamond-shaped plaque signed in white serigraphy. These details bring a guarantee of luxury that should not be ephemeral, but should last a lifetime.</p>
-                                    <a href="scents.html" class="button">Explore Scents <i class="fa fa-arrow-right"></i></a>
-                            </div>
-                        </div>
-                    </div>
+            <div class="recommendation-panel">
+                <div class="section-header recommendation-header">
+                    <h2 id="recommendation-title">Recommended for Your Profile</h2>
+                    <p>Click any scent card to find similar options, or save profile preferences for tailored picks</p>
                 </div>
+                <div id="recommendation-list" class="catalog-grid recommendation-grid"></div>
             </div>
         </div>
     </section>

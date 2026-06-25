@@ -1914,7 +1914,7 @@ h6 {
 
 .catalog-toolbar {
   display: grid;
-  grid-template-columns: minmax(240px, 1.6fr) repeat(3, minmax(150px, 1fr));
+  grid-template-columns: minmax(240px, 1.5fr) repeat(4, minmax(130px, 1fr));
   gap: 16px;
   align-items: end;
 }
@@ -2041,9 +2041,30 @@ h6 {
   object-fit: contain;
 }
 
+.scent-card__mark {
+  background:
+    linear-gradient(135deg, rgba(246, 105, 42, 0.14), rgba(34, 34, 34, 0.08)),
+    #fbfbfb;
+}
+
+.scent-card__mark span {
+  display: flex;
+  width: 88px;
+  height: 88px;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(246, 105, 42, 0.35);
+  border-radius: 50%;
+  background: #fff;
+  color: #f6692a;
+  font-family: "Montserrat", sans-serif;
+  font-size: 28px;
+  font-weight: 800;
+}
+
 .catalog-card__body {
   display: flex;
-  min-height: 310px;
+  min-height: 245px;
   flex: 1;
   flex-direction: column;
   padding: 18px;
@@ -2096,6 +2117,11 @@ h6 {
   padding: 6px 9px;
 }
 
+.scent-tags span:first-child {
+  background: #fff2eb;
+  color: #d9551d;
+}
+
 .catalog-card__footer {
   display: flex;
   align-items: center;
@@ -2113,6 +2139,34 @@ h6 {
 
 .catalog-card__footer i {
   color: #f6ad2a;
+}
+
+.wishlist-toggle {
+  border: 1px solid #e1e1e1;
+  border-radius: 999px;
+  background: #fff;
+  color: #444;
+  cursor: pointer;
+  font-size: 12px;
+  padding: 8px 12px;
+  transition: 0.2s ease;
+}
+
+.wishlist-toggle i {
+  color: #f6692a;
+  margin-right: 4px;
+}
+
+.wishlist-toggle:hover,
+.wishlist-toggle.active {
+  border-color: #f6692a;
+  background: #f6692a;
+  color: #fff;
+}
+
+.wishlist-toggle:hover i,
+.wishlist-toggle.active i {
+  color: #fff;
 }
 
 .catalog-actions {
@@ -2140,6 +2194,83 @@ h6 {
 
 .recommendation-panel {
   margin-top: 70px;
+}
+
+.profile-panel {
+  display: grid;
+  grid-template-columns: minmax(220px, 0.8fr) minmax(320px, 1.4fr) auto;
+  gap: 24px;
+  align-items: end;
+  margin-top: 28px;
+  border: 1px solid #ececec;
+  border-radius: 8px;
+  background: #fff;
+  padding: 24px;
+}
+
+.profile-panel h3 {
+  margin: 0 0 8px;
+  color: #222;
+  font-size: 24px;
+}
+
+.profile-panel p {
+  margin: 0;
+  color: #666;
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.profile-controls {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.profile-controls label {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin: 0;
+  color: #222;
+  font-family: "Montserrat", sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.profile-controls select {
+  min-height: 42px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  background: #fff;
+  color: #333;
+  padding: 0 12px;
+}
+
+.profile-actions {
+  display: flex;
+  min-width: 190px;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.profile-actions button {
+  border: 0;
+  border-radius: 4px;
+  background: #f6692a;
+  color: #fff;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  padding: 13px 18px;
+  text-transform: uppercase;
+}
+
+.profile-actions button:hover {
+  background: #222;
 }
 
 .recommendation-header {
@@ -2221,6 +2352,15 @@ h6 {
     height: 210px;
   }
 
+  .profile-panel,
+  .profile-controls {
+    grid-template-columns: 1fr;
+  }
+
+  .profile-actions {
+    min-width: 0;
+  }
+
   .recommendation-header h2 {
     font-size: 28px;
   }
@@ -2234,10 +2374,22 @@ h6 {
   .catalog-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
+
+  .profile-panel {
+    grid-template-columns: 1fr;
+  }
 }
 
 @media only screen and (min-width: 992px) and (max-width: 1199px) {
+  .catalog-toolbar {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
   .catalog-grid {
     grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .profile-panel {
+    grid-template-columns: 1fr;
   }
 }
