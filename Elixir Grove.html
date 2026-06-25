@@ -1,0 +1,580 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Elixir Grove</title>
+    <link rel="stylesheet" href="style/design.css">
+    <link rel="icon" type="image/x-icon" href="elixirgrove-logo.png">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+    <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.carousel.min.css">
+</head>
+<body>
+    
+
+    <div class="off_canvas_overlay"></div>
+
+    <div class="offcanvas-menu offcanvas-two">
+        <div class="canvas_open">
+            <a href="javascript:void(0)">
+                <i class="fa fa-bars"></i>
+            </a>
+        </div>
+    
+        <div class="off_canvas_menu_wrapper">
+            <div class="canvas_close">
+                <a href="javascript:void(0)">
+                    <i class="fa fa-times"></i>
+                </a>
+            </div>
+    
+            <div class="header_account">
+                <ul>
+                    <li class="language">
+                        <a href="#"><img src="images/icons/language.png" alt="English">EN <i class="fa fa-angle-down"></i></a>
+                        <ul class="dropdown_language">
+                            <li><a href="#">English</a></li>
+                            <li><a href="#">Chinese</a></li>
+                            <li><a href="#">Korean</a></li>
+                            <li><a href="#">Japanese</a></li>
+                        </ul>
+                    </li>
+    
+                    <li class="currency">
+                        <a href="#">INR <i class="fa fa-angle-down"></i></a>
+                        <ul class="dropdown_currency">
+                            <li><a href="#">USD</a></li>
+                            <li><a href="#">EUR</a></li>
+                            <li><a href="#">CNY</a></li>
+                            <li><a href="#">KRW</a></li>
+                            <li><a href="#">JPY</a></li>
+                        </ul>
+                    </li>
+    
+                    <li class="top-links">
+                        <a href="#">My Account <i class="fa fa-angle-down"></i></a>
+                        <ul class="dropdown_links">
+                            <li><a href="#">Profile</a></li>
+                            <li><a href="#">Checkout</a></li>
+                            <li><a href="#">Shopping Cart</a></li>
+                            <li><a href="#">Wishlist</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+    
+            <div class="header_right_information">
+                <ul>
+                    <li class="search_box">
+                        <a href="javascript:void(0)"><i class="fa fa-search"></i></a>
+                        <div class="search_widget">
+                            <form action="#">
+                                <input type="text" placeholder="Search a fragrance">
+                                <button type="submit"><i class="fa fa-search"></i></button>
+                            </form>
+                        </div>
+                    </li>
+    
+                    <li class="header_wishlist">
+                        <a href="#"><i class="fa fa-heart-o"></i>
+                            <span class="item_count">4</span>
+                        </a>
+                    </li>
+    
+                    <li class="mini_cart_wrapper">
+                        <a href="javascript:void(0)">
+                            <i class="fa fa-shopping-cart"></i>
+                            <span class="item_count">2</span>
+                        </a>
+    
+                        <div class="mini_cart mini_cart2">
+                            <div class="cart_gallery">
+                                <div class="cart_item">
+                                    <div class="cart_image">
+                                        <a href="#"><img src="images/carts/le-beau-big.png" alt="Perfume"></a>
+                                    </div>
+    
+                                    <div class="cart_info">
+                                        <a href="#">Jean Paul Gaultier Le Beau Le Parfum</a>
+                                        <p><span>$114</span> x 1</p>
+                                    </div>
+    
+                                    <div class="cart_remover">
+                                        <a href="#"><i class="fa fa-times"></i></a>
+                                    </div>
+                                </div>
+    
+                                <div class="cart_item">
+                                    <div class="cart_image">
+                                        <a href="#"><img src="images/carts/vic secret.png" alt="Perfume"></a>
+                                    </div>
+    
+                                    <div class="cart_info">
+                                        <a href="#">Victoria Secret Very Sexy 2018 EDP</a>
+                                        <p><span>$116</span> x 1</p>
+                                    </div>
+    
+                                    <div class="cart_remover">
+                                        <a href="#"><i class="fa fa-times"></i></a>
+                                    </div>
+                                </div>
+                            </div>
+    
+                            <div class="mini_cart_table">
+                                <div class="cart_table_border">
+                                    <div class="cart_total">
+                                        <span>Sub Total: </span>
+                                        <span class="price">$230</span>
+                                    </div>
+    
+                                    <div class="cart_total mt-10">
+                                        <span>Total: </span>
+                                        <span class="price">$230</span>
+                                    </div>
+                                </div>
+                            </div>
+    
+                            <div class="cart_footer">
+                                <div class="cart_button">
+                                    <a href="#">View Shopping Cart</a>
+                                </div>
+    
+                                <div class="cart_button">
+                                    <a href="#">Checkout</a>
+                                </div>
+                            </div>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+    
+            <div id="menu" class="text-left">
+                <ul class="offcanvas_main_menu">
+                    <li>
+                        <a href="#">Home</a>
+                    </li>
+    
+                    <li class="menu-item-category-has-children active">
+                        <a href="#">Brands</a>
+                        <ul class="sub-menu">
+
+                            <li class="menu-item-category-has-children active">
+                                <a href="#">Men</a>
+                                <ul class="sub-menu">
+                                    <li><a href="#">Jean Paul Gaultier</a></li>
+                                    <li><a href="#">Mont Blanc</a></li>
+                                    <li><a href="#">Paco Rabanne</a></li>
+                                    <li><a href="#">Versace</a></li>
+                                    <li><a href="#">Acqua Di Gio Armani</a></li>
+                                    <li><a href="#">Chanel</a></li>
+                                    <li><a href="#">Ralph Lauren</a></li>
+                                    <li><a href="#">Dior</a></li>
+                                    <li><a href="#">Others</a></li>
+                                </ul>
+                            </li>
+    
+                            <li class="menu-item-category-has-children active">
+                                <a href="#">Women</a>
+                                <ul class="sub-menu">
+                                    <li><a href="#">Victoria's Secret</a></li>
+                                    <li><a href="#">Bvlgari</a></li>
+                                    <li><a href="#">Coach</a></li>
+                                    <li><a href="#">Kenzor</a></li>
+                                    <li><a href="#">Dolce & Gabbana</a></li>
+                                    <li><a href="#">Chanel</a></li>
+                                    <li><a href="#">Jean Paul Gaultier</a></li>
+                                    <li><a href="#">Thierry Mugler</a></li>
+                                    <li><a href="#">Others</a></li>
+                                </ul>
+                            </li>
+    
+                            <li class="menu-item-category-has-children active">
+                                <a href="#">Unisex</a>
+                                <ul class="sub-menu">
+                                    <li><a href="#">Angel Share</a></li>
+                                    <li><a href="#">Noir</a></li>
+                                    <li><a href="#">By The Fireplace</a></li>
+                                    <li><a href="#">Gris Charnel</a></li>
+                                    <li><a href="#">Santal</a></li>
+                                    <li><a href="#">Calvin Klein</a></li>
+                                    <li><a href="#">Jean Paul Gaultier</a></li>
+                                    <li><a href="#">Babycat</a></li>
+                                    <li><a href="#">Others</a></li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </li>
+    
+                    <li class="menu-item-category-has-children active">
+                        <a href="#community-section">Community</a>
+                        <ul class="sub-menu">
+                            <li><a href="#">Newsletter</a></li>
+                            <li><a href="#">Social Media</a></li>
+                        </ul>
+                    </li>
+
+                    <li>
+                        <a href="#brands-section">Brands</a>
+                    </li>
+
+                    <li class="menu-item-category-has-children">
+                        <a href="#about-section">About Us</a>
+                    </li>
+                </ul>
+            </div>
+    
+            <div class="offcanvas_footer">
+                <span><a href="#"><i class="fa fa-envelope-0"></i>charlesecnoleal@gmail.com</a></span>
+                <ul>
+                    <li class="facebook"><a href="#"><i class="fa fa-facebook"></i></a></li>
+                    <li class="twitter"><a href="#"><i class="fa fa-twitter"></i></a></li>
+                    <li class="instagram"><a href="#"><i class="fa fa-instagram"></i></a></li>
+                    <li class="youtube"><a href="#"><i class="fa fa-youtube"></i></a></li>
+                </ul>
+            </div>
+    
+        </div>
+    </div>
+
+    <header>
+        <div class="main_header header_transparent header-mobile-m">
+            <div class="header_container sticky-header">
+                <div class="container-fluid">
+                    <div class="row align-items-center">
+                        <div class="col-lg-2">
+                            <div class="logo" style="display: flex; align-items: center;">
+                                <a href="Elixir Grove.html">
+                                    <img src="elixirgrove-logo.png" alt="" style="width: 100px; height:auto">
+                                </a>
+
+                                <div style="margin-left: 10px;">
+                                    <h1 style="font-family: 'Yeseva One', serif;; font-weight: 400; font-style: normal; font-size: 47.78px; margin: 0; line-height: 1;">Elixir</h1>
+                                    <h3 style="margin: 0;  font-family: 'Montserrat', sans-serif; font-weight: 400; font-style: normal; line-height: 1; font-size: 33.18px;">Grove</h3>
+                                </div>
+                            </div>
+                        </div>                                                
+    
+                        <div class="col-lg-6">
+                            <div class="main_menu menu_two menu_position">
+                                <nav>
+                                    <ul>
+                                        <li>
+                                            <a href="Elixir Grove.html" class="active">Home</a>
+                                        </li>
+    
+                                        <li class="mega_items">
+                                            <a href="#">Brands <i class="fa fa-angle-down"></i></a>
+                                            <div class="mega_menu">
+                                                <ul class="mega_menu_inner">
+                                                    <li>
+                                                        <a href="#">Men</a>
+                                                        <ul>
+                                                            <li><a href="#">Jean Paul Gaultier</a></li>
+                                                            <li><a href="#">Mont Blanc</a></li>
+                                                            <li><a href="#">Paco Rabanne</a></li>
+                                                            <li><a href="#">Versace</a></li>
+                                                            <li><a href="#">Acqua Di Gio Armani</a></li>
+                                                            <li><a href="#">Chanel</a></li>
+                                                            <li><a href="#">Ralph Lauren</a></li>
+                                                            <li><a href="#">Dior</a></li>
+                                                            <li><a href="#">Others</a></li>
+                                                        </ul>
+                                                    </li>
+    
+    
+                                                    <li>
+                                                        <a href="#">Women</a>
+                                                        <ul>
+                                                            <li><a href="#">Victoria's Secret</a></li>
+                                                            <li><a href="#">Bvlgari</a></li>
+                                                            <li><a href="#">Coach</a></li>
+                                                            <li><a href="#">Kenzor</a></li>
+                                                            <li><a href="#">Dolce & Gabbana</a></li>
+                                                            <li><a href="#">Chanel</a></li>
+                                                            <li><a href="#">Jean Paul Gaultier</a></li>
+                                                            <li><a href="#">Thierry Mugler</a></li>
+                                                            <li><a href="#">Others</a></li>
+                                                        </ul>
+                                                    </li>
+    
+                                                    <li>
+                                                        <a href="#">Unisex</a>
+                                                        <ul>
+                                                            <li><a href="#">by Kilian</a></li>
+                                                            <li><a href="#">Noir</a></li>
+                                                            <li><a href="#">By The Fireplace</a></li>
+                                                            <li><a href="#">Gris Charnel</a></li>
+                                                            <li><a href="#">Santal</a></li>
+                                                            <li><a href="#">Calvin Klein</a></li>
+                                                            <li><a href="#">Jean Paul Gaultier</a></li>
+                                                            <li><a href="#">Babycat</a></li>
+                                                            <li><a href="#">Others</a></li>
+                                                        </ul>
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                        </li>
+    
+                                        <li>
+                                            <a href="#community-section">Community <i class="fa fa-angle-down"></i></a>
+                                            <ul class="sub-menu pages">
+                                                <li><a href="#">Newsletter</a></li>
+                                                <li><a href="#">Social Media</a></li>
+                                            </ul>
+                                        </li>
+
+                                        <li><a href="#about-section">About Us</a></li>
+                                    </ul>
+                                </nav>
+                            </div>
+                        </div>
+    
+                        <div class="col-lg-4">
+                            <div class="header_top_right">
+                                <div class="header_right_information">
+                                    <ul>
+                                        <li class="search_box">
+                                            <a href="javascript:void(0)">
+                                                <i class="fa fa-search"></i>
+                                            </a>
+    
+                                            <div class="search_widget">
+                                                <form action="#">
+                                                    <input type="text" placeholder="Search your fragrance">
+                                                    <button type="submit"><i class="fa fa-search"></i></button>
+                                                </form>
+                                            </div>
+                                        </li>
+    
+                                        <li class="header_wishlist">
+                                            <a href="#">
+                                                <i class="fa fa-heart-o"></i>
+                                                <span class="item_count">4</span>
+                                            </a>
+                                        </li>
+    
+                                        <li class="mini_cart_wrapper">
+                                            <a href="javascript:void(0)">
+                                                <i class="fa fa-shopping-cart"></i>
+                                                <span class="item_count">2</span>
+                                            </a>
+    
+                                            <div class="mini_cart mini_cart2">
+                                                <div class="cart_gallery">
+                                                    <div class="cart_item">
+                                                        <div class="cart_image">
+                                                            <a href="#"><img src="images/carts/le-beau-big.png" alt="Perfume"></a>
+                                                        </div>
+                        
+                                                        <div class="cart_info">
+                                                            <a href="#">Jean Paul Gaultier Le Beau Le Parfum</a>
+                                                            <p><span>$114</span> x 1</p>
+                                                        </div>
+                        
+                                                        <div class="cart_remover">
+                                                            <a href="#"><i class="fa fa-times"></i></a>
+                                                        </div>
+                                                    </div>
+                        
+                                                    <div class="cart_item">
+                                                        <div class="cart_image">
+                                                            <a href="#"><img src="images/carts/vic secret.png" alt="Perfume"></a>
+                                                        </div>
+                        
+                                                        <div class="cart_info">
+                                                            <a href="#">Victoria Secret Very Sexy 2018 EDP</a>
+                                                            <p><span>$116</span> x 1</p>
+                                                        </div>
+                        
+                                                        <div class="cart_remover">
+                                                            <a href="#"><i class="fa fa-times"></i></a>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                        
+                                                <div class="mini_cart_table">
+                                                    <div class="cart_table_border">
+                                                        <div class="cart_total">
+                                                            <span>Sub Total: </span>
+                                                            <span class="price">$230</span>
+                                                        </div>
+                        
+                                                        <div class="cart_total mt-10">
+                                                            <span>Total: </span>
+                                                            <span class="price">$230</span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                        
+                                                <div class="cart_footer">
+                                                    <div class="cart_button">
+                                                        <a href="#">View Shopping Cart</a>
+                                                    </div>
+                        
+                                                    <div class="cart_button">
+                                                        <a href="#">Checkout</a>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </li>
+                                    </ul>
+                                </div>
+    
+                                <div class="header_account">
+                                    <ul>
+                                        <li class="top_links">
+                                            <a href="#">
+                                                <i class="fa fa-user"></i>
+                                            </a>
+
+                                            <ul class="dropdown_links">
+                                                <li><a href="#">Profile</a></li>
+                                                <li><a href="#">Checkout</a></li>
+                                                <li><a href="#">Shopping Cart</a></li>
+                                                <li><a href="#">Wishlist</a></li>
+                                            </ul>
+                                        </li>
+
+                                        <li class="currency">
+                                            <a href="#">INR <i class="fa fa-angle-down"></i></a>
+                                            <ul class="dropdown_currency">
+                                                <li><a href="#">USD</a></li>
+                                                <li><a href="#">EUR</a></li>
+                                                <li><a href="#">CNY</a></li>
+                                                <li><a href="#">KRW</a></li>
+                                                <li><a href="#">JPY</a></li>
+                                            </ul>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <section class="slider_section slider_section2 mb-66">
+        <div class="slider_area owl-carousel">
+            <div class="single_slider d-flex align-items-center" data-bgimg="/images/banner/banner1.jpeg">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-lg-6 col-md-7">
+                            <div class="slider_content slider_content2 content_right">
+                                <h1>Jean Paul Gaultier</h1>
+                                <h2>Le Beau Le Parfum</h2>
+                                <p>It's captivating to the point of sin. Straight from the Garden of Eden, the woody charm of this intense Eau de Parfum has only one desire: to seduce you. 
+                                    From the freshness of ginger to the wild sensuality of ambergris, and the enveloping power of sandalwood, this scent is sure to pull you in. The final touch: delicious tonka bean. 
+                                    You will fall in love.</p>
+                                    <a href="#" class="button">Shop Now <i class="fa fa-arrow-right"></i></a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="single_slider d-flex align-items-center" data-bgimg="/images/banner/mutiny.jpg">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-lg-6 offset-lg-6 col-md-6 offset-md-6">
+                            <div class="slider_content slider_content2 content_right">
+                                <h1>Maison Margiela</h1>
+                                <h2>Mutiny</h2>
+                                <p>The classic fragrance of tuberose has been reimagined and amplified with three distinct, potent notes, complemented by jasmine, orange blossom, and citrus for a magnetic, euphoric aroma. A leathery blend of saffron, oud, and vanilla adds a new dimension to the fragrance, creating a bold and unforgettable signature.
+                                </p>
+                                    <a href="#" class="button">Shop Now <i class="fa fa-arrow-right"></i></a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="single_slider d-flex align-items-center" data-bgimg="/images/banner/test.jpg">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-lg-6 offset-lg-6 col-md-6 offset-md-6">
+                            <div class="slider_content slider_content2 content_left">
+                                <h1>Kilian</h1>
+                                <h2>Angel's Share </h2>
+                                <p>The bottle of the perfumes of THE LIQUORS collection is styled as a speakeasy essential, 
+                                    like art deco glasses to recall the most fabulous bars. The weighted glass is engraved with the emblematic K motif to throw and catch light at all angles, finished with a golden, 
+                                    diamond-shaped plaque signed in white serigraphy. These details bring a guarantee of luxury that should not be ephemeral, but should last a lifetime.</p>
+                                    <a href="#" class="button">Shop Now <i class="fa fa-arrow-right"></i></a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Brands Section -->
+    <section id="brands-section" class="content-section brands-section">
+        <div class="container">
+            <div class="section-header">
+                <h2>Our Brands</h2>
+                <p>Discover our exclusive collection of luxury fragrances</p>
+            </div>
+            <div class="section-content">
+                <p>Content for Brands section to be added...</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Community Section -->
+    <section id="community-section" class="content-section community-section">
+        <div class="container">
+            <div class="section-header">
+                <h2>Community</h2>
+                <p>Join our fragrance community</p>
+            </div>
+            <div class="section-content">
+                <p>Content for Community section to be added...</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Us Section -->
+    <section id="about-section" class="content-section about-section">
+        <div class="container">
+            <div class="section-header">
+                <h2>About Us</h2>
+                <p>Learn more about Elixir Grove</p>
+            </div>
+            <div class="section-content">
+                <p>Content for About Us section to be added...</p>
+            </div>
+        </div>
+    </section>
+
+<div id="foot">
+    <div class="footer-content">
+        <div class="footer-section">
+            <h3>Contact Us</h3>
+            <p>Email: <a href="mailto:charlesecnoleal@gmail.com">charlesecnoleal@gmail.com</a></p>
+            <ul class="social-links">
+                <li class="facebook"><a href="#"><i class="fa fa-facebook"></i></a></li>
+                <li class="twitter"><a href="#"><i class="fa fa-twitter"></i></a></li>
+                <li class="instagram"><a href="#"><i class="fa fa-instagram"></i></a></li>
+                <li class="youtube"><a href="#"><i class="fa fa-youtube"></i></a></li>
+            </ul>
+        </div>
+    </div>
+    <p class="footer-credit">This is a practice project of Charles Edward Noleal.</p>
+</div>
+
+
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/owl.carousel.min.js"></script>
+    <script src="/javascript/backbone.js"></script>
+    
+</body>
+</html>
