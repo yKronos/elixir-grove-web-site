@@ -1,2 +1,4 @@
 .codex-publish-work-*/
 .codex-tools/
+node_modules/
+dist/
