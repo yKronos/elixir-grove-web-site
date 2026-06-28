@@ -1,5 +1,6 @@
 /** @type {import('tailwindcss').Config} */
 export default {
+  darkMode: "class",
   content: ["./index.html", "./src/**/*.{js,jsx}"],
   theme: {
     extend: {
@@ -11,8 +12,8 @@ export default {
         moss: "#3d4a37"
       },
       fontFamily: {
-        display: ["Playfair Display", "Georgia", "serif"],
-        body: ["Inter", "ui-sans-serif", "system-ui", "sans-serif"]
+        display: ["Yeseva One", "Georgia", "serif"],
+        body: ["Montserrat", "ui-sans-serif", "system-ui", "sans-serif"]
       },
       boxShadow: {
         soft: "0 24px 70px rgba(42, 31, 21, 0.12)",

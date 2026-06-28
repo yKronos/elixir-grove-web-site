@@ -128,6 +128,26 @@ export async function toggleWishlist(db, productId) {
   return true;
 }
 
+export async function searchProducts(db, query) {
+  const normalizedQuery = query.trim().toLowerCase();
+  if (!normalizedQuery) return [];
+
+  const products = await runTransaction(db, ["products"], "readonly", (tx) =>
+    requestToPromise(tx.objectStore("products").getAll())
+  );
+
+  return products.filter((product) => {
+    const searchText =
+      product.searchText ||
+      [product.brand, product.name, product.type, product.category, product.gender, product.family]
+        .filter(Boolean)
+        .join(" ")
+        .toLowerCase();
+
+    return searchText.includes(normalizedQuery);
+  });
+}
+
 export async function initializeStore(products) {
   const db = await openDatabase();
   await seedProducts(db, products);
