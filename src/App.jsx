@@ -25,7 +25,7 @@ import { initializeStore, saveProfile, searchProducts, toggleWishlist } from "./
 
 const navItems = [
   { id: "home", label: "Home" },
-  { id: "scents", label: "Scents" },
+  { id: "scents", label: "Scents ˯" },
   { id: "community", label: "Community" },
   { id: "about", label: "About" }
 ];
