@@ -1,9 +1,21 @@
-import "../../javascript/product-data.js";
+let catalogPromise;
 
-const payload = window.ELIXIR_CATALOG || { products: [] };
+export const catalogProducts = [];
 
-export const catalogSource = payload.source || {};
-export const catalogProducts = payload.products || [];
+export async function loadCatalog() {
+  if (!catalogPromise) {
+    catalogPromise = fetch("/data/fragrances.json")
+      .then((response) => {
+        if (!response.ok) throw new Error(`Catalog request failed with ${response.status}.`);
+        return response.json();
+      })
+      .then((payload) => ({
+        source: payload.source || {},
+        products: payload.products || []
+      }));
+  }
+  return catalogPromise;
+}
 
 export function uniqueValues(products, key) {
   return [...new Set(products.map((product) => product[key]).filter(Boolean))].sort((a, b) =>

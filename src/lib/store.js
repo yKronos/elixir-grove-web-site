@@ -220,16 +220,14 @@ export async function searchProducts(db, query) {
 
 export async function initializeStore(products) {
   const db = await openDatabase();
-  await seedProducts(db, products);
-  const [storedProducts, storedImages] = await Promise.all([
-    runTransaction(db, ["products"], "readonly", (tx) => requestToPromise(tx.objectStore("products").getAll())),
-    runTransaction(db, ["productImages"], "readonly", (tx) => requestToPromise(tx.objectStore("productImages").getAll()))
-  ]);
+  const storedImages = await runTransaction(db, ["productImages"], "readonly", (tx) =>
+    requestToPromise(tx.objectStore("productImages").getAll())
+  );
   const imagesByProduct = new Map(storedImages.map((record) => [
     record.productId,
     record.image instanceof Blob ? URL.createObjectURL(record.image) : record.image
   ]));
-  const hydratedProducts = storedProducts.map((product) => ({
+  const hydratedProducts = products.map((product) => ({
     ...product,
     imageUrl: imagesByProduct.get(product.id) || null
   }));

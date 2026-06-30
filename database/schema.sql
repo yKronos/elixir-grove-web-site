@@ -11,6 +11,8 @@ CREATE TABLE accounts (
 
 CREATE TABLE products (
     id TEXT PRIMARY KEY,
+    source_id TEXT,
+    source_url TEXT,
     brand TEXT NOT NULL,
     name TEXT NOT NULL,
     type TEXT NOT NULL,
@@ -18,6 +20,14 @@ CREATE TABLE products (
     family TEXT NOT NULL,
     gender TEXT NOT NULL,
     longevity TEXT NOT NULL,
+    country TEXT,
+    release_year INTEGER,
+    rating_value REAL,
+    rating_count INTEGER NOT NULL DEFAULT 0,
+    accords_json TEXT NOT NULL DEFAULT '[]',
+    notes_json TEXT NOT NULL DEFAULT '{}',
+    perfumers_json TEXT NOT NULL DEFAULT '[]',
+    description TEXT,
     search_text TEXT NOT NULL
 );
 
@@ -54,3 +64,15 @@ CREATE TABLE wishlists (
     FOREIGN KEY (account_id) REFERENCES accounts(id) ON DELETE CASCADE,
     FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE CASCADE
 );
+
+CREATE TABLE scent_votes (
+    account_id TEXT NOT NULL,
+    product_id TEXT NOT NULL,
+    vote TEXT NOT NULL CHECK (vote IN ('love', 'like', 'ok', 'dislike', 'hate')),
+    updated_at TEXT NOT NULL,
+    PRIMARY KEY (account_id, product_id),
+    FOREIGN KEY (account_id) REFERENCES accounts(id) ON DELETE CASCADE,
+    FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE CASCADE
+);
+
+CREATE INDEX idx_scent_votes_product_id ON scent_votes(product_id);

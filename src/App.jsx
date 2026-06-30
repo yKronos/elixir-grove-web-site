@@ -24,6 +24,7 @@ import {
 } from "lucide-react";
 import {
   catalogProducts,
+  loadCatalog,
   scoreByProfile,
   topBrands,
   uniqueValues
@@ -110,7 +111,8 @@ function App() {
   useEffect(() => {
     let mounted = true;
 
-    initializeStore(catalogProducts)
+    loadCatalog()
+      .then(({ products: importedProducts }) => initializeStore(importedProducts))
       .then((state) => {
         if (!mounted) return;
         setDb(state.db);
@@ -811,7 +813,7 @@ function profileHash(value) {
 }
 
 function buildScentProfile(product) {
-  const text = `${product.category} ${product.family}`.toLowerCase();
+  const text = `${product.category} ${product.family} ${(product.accords || []).join(" ")}`.toLowerCase();
   const warm = /amber|oriental|oud|wood|spic|gourmand|vanilla|leather|tobacco/.test(text);
   const fresh = /fresh|citrus|aquatic|green|aromatic|fruity/.test(text);
   const floral = /floral|flower|rose/.test(text);
@@ -824,7 +826,9 @@ function buildScentProfile(product) {
     { label: "Autumn", value: score("autumn", warm ? 88 : 62) },
     { label: "Winter", value: score("winter", warm ? 92 : 48) }
   ];
-  const accordLabels = [...new Set([product.category, product.family, product.type, product.longevity])]
+  const accordLabels = [...new Set(product.accords?.length
+    ? product.accords
+    : [product.category, product.family, product.type, product.longevity])]
     .filter(Boolean)
     .slice(0, 4);
   const accords = accordLabels.map((label, index) => ({
@@ -950,7 +954,16 @@ function ScentProfileModal({ product, account, db, onClose, onRequireLogin }) {
 
           <p className="pr-24 text-xs font-bold uppercase tracking-[0.28em] text-ember">{product.brand}</p>
           <h2 className="mt-3 pr-20 font-display text-4xl leading-tight sm:text-5xl">{product.name}</h2>
-          <p className="mt-3 text-sm font-semibold text-ink/50 dark:text-white/50">{product.type} · {product.gender} · {product.longevity}</p>
+          <p className="mt-3 text-sm font-semibold text-ink/50 dark:text-white/50">
+            {[product.gender, product.year, product.country].filter(Boolean).join(" · ")}
+          </p>
+          {product.ratingValue && (
+            <p className="mt-3 flex items-center gap-2 text-sm font-bold text-ember">
+              <Star className="h-4 w-4" fill="currentColor" />
+              {product.ratingValue.toFixed(2)} <span className="font-medium text-ink/40 dark:text-white/40">from {product.ratingCount.toLocaleString()} ratings</span>
+            </p>
+          )}
+          {product.description && <p className="mt-5 line-clamp-4 text-sm leading-6 text-ink/60 dark:text-white/60">{product.description}</p>}
 
           <section className="mt-9">
             <p className="text-xs font-bold uppercase tracking-[0.25em] text-ink/45 dark:text-white/45">Main accords</p>
@@ -963,6 +976,21 @@ function ScentProfileModal({ product, account, db, onClose, onRequireLogin }) {
               ))}
             </div>
           </section>
+
+          {product.notes && (product.notes.top.length || product.notes.middle.length || product.notes.base.length) ? (
+            <section className="mt-9">
+              <p className="text-xs font-bold uppercase tracking-[0.25em] text-ink/45 dark:text-white/45">Fragrance notes</p>
+              <div className="mt-4 grid gap-3 sm:grid-cols-3">
+                {[{ label: "Top", notes: product.notes.top }, { label: "Heart", notes: product.notes.middle }, { label: "Base", notes: product.notes.base }].map((group) => (
+                  <div className="rounded-2xl border border-ink/8 bg-white/60 p-3 dark:border-white/10 dark:bg-white/5" key={group.label}>
+                    <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-ember">{group.label}</p>
+                    <p className="mt-2 text-xs leading-5 text-ink/60 dark:text-white/60">{group.notes.length ? group.notes.join(", ") : "Not listed"}</p>
+                  </div>
+                ))}
+              </div>
+              {product.perfumers?.length > 0 && <p className="mt-3 text-xs text-ink/45 dark:text-white/45">Created by {product.perfumers.join(" and ")}</p>}
+            </section>
+          ) : null}
 
           <section className="mt-9">
             <p className="text-xs font-bold uppercase tracking-[0.25em] text-ink/45 dark:text-white/45">Best time to wear</p>
