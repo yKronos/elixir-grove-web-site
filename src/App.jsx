@@ -1,27 +1,44 @@
 import React, { useEffect, useMemo, useState } from "react";
 import {
   ArrowRight,
+  ChevronDown,
   ChevronLeft,
   ChevronRight,
   Heart,
+  HeartCrack,
   Leaf,
   Languages,
+  Lock,
+  LogOut,
+  Maximize2,
+  Meh,
   Menu,
   Moon,
   Search,
   Sun,
   Star,
+  ThumbsDown,
+  ThumbsUp,
   UserRound,
   X
 } from "lucide-react";
 import {
   catalogProducts,
   scoreByProfile,
-  scoreBySimilarity,
   topBrands,
   uniqueValues
 } from "./lib/catalog.js";
-import { initializeStore, saveProfile, searchProducts, toggleWishlist } from "./lib/store.js";
+import {
+  castScentVote,
+  getScentVotes,
+  initializeStore,
+  loginAccount,
+  logoutAccount,
+  registerAccount,
+  saveProfile,
+  searchProducts,
+  toggleWishlist
+} from "./lib/store.js";
 
 const navItems = [
   { id: "home", label: "Home" },
@@ -70,6 +87,7 @@ function App() {
   const [db, setDb] = useState(null);
   const [products, setProducts] = useState(catalogProducts);
   const [wishlist, setWishlist] = useState(new Set());
+  const [account, setAccount] = useState(null);
   const [profile, setProfile] = useState(null);
   const [filters, setFilters] = useState({
     query: "",
@@ -79,8 +97,9 @@ function App() {
     longevity: "all"
   });
   const [visibleCount, setVisibleCount] = useState(16);
+  const [profileStatus, setProfileStatus] = useState("Your preferences are saved to this account.");
+  const [accountNotice, setAccountNotice] = useState("");
   const [selectedProduct, setSelectedProduct] = useState(null);
-  const [profileStatus, setProfileStatus] = useState("Wishlist and profile data save locally.");
   const [currency, setCurrency] = useState(() => localStorage.getItem("elixir-currency") || "PHP");
   const [language, setLanguage] = useState(() => localStorage.getItem("elixir-language") || "en");
   const [darkMode, setDarkMode] = useState(() =>
@@ -97,13 +116,12 @@ function App() {
         setDb(state.db);
         setProducts(state.products);
         setWishlist(state.wishlist);
+        setAccount(state.account);
         setProfile(state.profile);
-        setSelectedProduct(state.products[0] || null);
       })
       .catch(() => {
         if (!mounted) return;
         setProducts(catalogProducts);
-        setSelectedProduct(catalogProducts[0] || null);
       });
 
     return () => {
@@ -155,9 +173,7 @@ function App() {
     const scored = products
       .map((product) => ({
         product,
-        score: selectedProduct
-          ? scoreBySimilarity(selectedProduct, product)
-          : scoreByProfile(profile, product)
+        score: scoreByProfile(profile, product)
       }))
       .filter((entry) => entry.score > 0)
       .sort((a, b) => b.score - a.score || a.product.name.localeCompare(b.product.name))
@@ -165,7 +181,7 @@ function App() {
       .map((entry) => entry.product);
 
     return scored.length ? scored : products.slice(0, 4);
-  }, [products, profile, selectedProduct]);
+  }, [products, profile]);
 
   const showScents = (nextFilters = {}) => {
     setRoute("scents");
@@ -182,10 +198,11 @@ function App() {
     showScents({ query: normalizedQuery, brand: "all", category: "all", gender: "all", longevity: "all" });
   };
 
-  const showProfile = () => {
-    setRoute("scents");
+  const showAccount = (notice = "") => {
+    setRoute("account");
+    setAccountNotice(notice);
     setMenuOpen(false);
-    window.setTimeout(() => document.getElementById("profile-panel")?.scrollIntoView({ behavior: "smooth" }), 100);
+    window.setTimeout(() => window.scrollTo({ top: 0, behavior: "smooth" }), 60);
   };
 
   const updateFilter = (key, value) => {
@@ -194,8 +211,12 @@ function App() {
   };
 
   const handleWishlist = async (productId) => {
+    if (!account) {
+      showAccount("Join us to unlock wishlists, your scent profile, and personal recommendations!");
+      return;
+    }
     if (!db) return;
-    const wished = await toggleWishlist(db, productId);
+    const wished = await toggleWishlist(db, account.id, productId);
     setWishlist((current) => {
       const next = new Set(current);
       if (wished) next.add(productId);
@@ -205,14 +226,32 @@ function App() {
   };
 
   const handleProfileSave = async (preferences) => {
-    if (!db || !profile) return;
+    if (!db || !profile || !account) return;
     const nextProfile = await saveProfile(db, {
       ...profile,
       preferences
     });
     setProfile(nextProfile);
-    setSelectedProduct(null);
     setProfileStatus("Preferences saved. Recommendations refreshed.");
+  };
+
+  const handleAuth = async (mode, values) => {
+    if (!db) throw new Error("The account database is still loading. Please try again.");
+    const state = mode === "register"
+      ? await registerAccount(db, values)
+      : await loginAccount(db, values);
+    setAccount(state.account);
+    setProfile(state.profile);
+    setWishlist(state.wishlist);
+    setAccountNotice("");
+  };
+
+  const handleLogout = () => {
+    logoutAccount();
+    setAccount(null);
+    setProfile(null);
+    setWishlist(new Set());
+    setAccountNotice("You have been signed out.");
   };
 
   return (
@@ -224,9 +263,10 @@ function App() {
         setMenuOpen={setMenuOpen}
         brands={featuredBrands}
         wishlistCount={wishlist.size}
+        account={account}
         showScents={showScents}
         onSearch={handleSearch}
-        onProfile={showProfile}
+        onAccount={showAccount}
         currency={currency}
         setCurrency={setCurrency}
         language={language}
@@ -235,7 +275,28 @@ function App() {
         setDarkMode={setDarkMode}
       />
 
-      {route === "scents" ? (
+      {route === "account" ? (
+        <>
+          <AccountPage
+            account={account}
+            notice={accountNotice}
+            onAuth={handleAuth}
+            onLogout={handleLogout}
+            profile={profile}
+            profileStatus={profileStatus}
+            onProfileSave={handleProfileSave}
+            brands={brands}
+            categories={categories}
+            genders={genders}
+            longevity={longevity}
+            recommendations={recommendations}
+            wishlistProducts={products.filter((product) => wishlist.has(product.id))}
+            onWishlist={handleWishlist}
+            currency={currency}
+          />
+          <Footer />
+        </>
+      ) : route === "scents" ? (
         <>
           <Scents
           brands={brands}
@@ -250,12 +311,7 @@ function App() {
           updateFilter={updateFilter}
           wishlist={wishlist}
           onWishlist={handleWishlist}
-          onSelectProduct={setSelectedProduct}
-          selectedProduct={selectedProduct}
-          recommendations={recommendations}
-          profile={profile}
-          profileStatus={profileStatus}
-          onProfileSave={handleProfileSave}
+          onSelect={setSelectedProduct}
           currency={currency}
           />
           <Footer />
@@ -266,6 +322,18 @@ function App() {
           <Community />
           <AboutWithFooter />
         </>
+      )}
+      {selectedProduct && (
+        <ScentProfileModal
+          account={account}
+          db={db}
+          onClose={() => setSelectedProduct(null)}
+          onRequireLogin={() => {
+            setSelectedProduct(null);
+            showAccount("Log in or create an account before voting on a scent.");
+          }}
+          product={selectedProduct}
+        />
       )}
     </div>
   );
@@ -278,9 +346,10 @@ function Navigation({
   setMenuOpen,
   brands,
   wishlistCount,
+  account,
   showScents,
   onSearch,
-  onProfile,
+  onAccount,
   currency,
   setCurrency,
   language,
@@ -341,10 +410,12 @@ function Navigation({
                 type="button"
               >
                 {text[item.id]}
+                {item.id === "scents" && <ChevronDown className="ml-1 inline h-4 w-4" aria-hidden="true" />}
               </button>
 
               {item.id === "scents" && (
-                <div className="pointer-events-none absolute left-1/2 top-9 w-[520px] -translate-x-1/2 rounded-3xl border border-white/70 bg-white/95 p-5 opacity-0 shadow-soft transition duration-300 group-hover:pointer-events-auto group-hover:opacity-100 dark:border-white/10 dark:bg-zinc-900/95">
+                <div className="pointer-events-none absolute left-1/2 top-full w-[520px] -translate-x-1/2 pt-5 opacity-0 transition duration-200 group-hover:pointer-events-auto group-hover:opacity-100 group-focus-within:pointer-events-auto group-focus-within:opacity-100">
+                  <div className="rounded-3xl border border-white/70 bg-white/95 p-5 shadow-soft dark:border-white/10 dark:bg-zinc-900/95">
                   <p className="mb-4 text-xs font-bold uppercase tracking-[0.28em] text-ink/45">
                     Available brands
                   </p>
@@ -359,6 +430,7 @@ function Navigation({
                         {brand} <span className="text-xs opacity-60">({count})</span>
                       </button>
                     ))}
+                  </div>
                   </div>
                 </div>
               )}
@@ -376,11 +448,11 @@ function Navigation({
           </select>
           <button aria-label={language === "en" ? "Switch to Filipino" : "Switch to English"} className="hidden h-10 items-center gap-1 rounded-full border border-ink/10 bg-white px-3 text-xs font-bold xl:flex dark:border-white/15 dark:bg-zinc-900" onClick={() => setLanguage((current) => current === "en" ? "fil" : "en")} type="button"><Languages className="h-4 w-4" />{language.toUpperCase()}</button>
           <button aria-label={darkMode ? "Use light mode" : "Use dark mode"} className="hidden rounded-full border border-ink/10 bg-white p-2.5 transition hover:text-ember sm:block dark:border-white/15 dark:bg-zinc-900" onClick={() => setDarkMode((current) => !current)} type="button">{darkMode ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}</button>
-          <button aria-label={text.profile} className="hidden rounded-full border border-ink/10 bg-white p-2.5 transition hover:text-ember sm:block dark:border-white/15 dark:bg-zinc-900" onClick={onProfile} type="button"><UserRound className="h-4 w-4" /></button>
+          <button aria-label={account ? `Account: ${account.name}` : "Log in or register"} className="hidden rounded-full border border-ink/10 bg-white p-2.5 transition hover:text-ember sm:block dark:border-white/15 dark:bg-zinc-900" onClick={() => onAccount()} type="button"><UserRound className="h-4 w-4" /></button>
           <button
             aria-label={`${text.wishlist}: ${wishlistCount}`}
             className="hidden rounded-full border border-ink/10 bg-white px-3 py-2 text-sm font-semibold shadow-sm transition hover:border-ember hover:text-ember md:flex dark:border-white/15 dark:bg-zinc-900"
-            onClick={() => showScents()}
+            onClick={() => onAccount(account ? "" : "Join us to unlock your wishlist!")}
             type="button"
           >
             <Heart className="mr-2 h-4 w-4" />
@@ -410,14 +482,14 @@ function Navigation({
                 onClick={() => navAction(item.id)}
                 type="button"
               >
-                {text[item.id]}
+                {text[item.id]}{item.id === "scents" && <ChevronDown className="ml-2 inline h-4 w-4" />}
               </button>
             ))}
             <div className="grid grid-cols-2 gap-3">
               <select aria-label="Currency" className="rounded-2xl bg-white px-4 py-3 dark:bg-zinc-900" onChange={(event) => setCurrency(event.target.value)} value={currency}><option value="PHP">PHP</option><option value="USD">USD</option><option value="EUR">EUR</option></select>
               <button className="rounded-2xl bg-white px-4 py-3 text-left dark:bg-zinc-900" onClick={() => setLanguage((current) => current === "en" ? "fil" : "en")} type="button"><Languages className="mr-2 inline h-4 w-4" />{language.toUpperCase()}</button>
               <button className="rounded-2xl bg-white px-4 py-3 text-left dark:bg-zinc-900" onClick={() => setDarkMode((current) => !current)} type="button">{darkMode ? <Sun className="mr-2 inline h-4 w-4" /> : <Moon className="mr-2 inline h-4 w-4" />}Theme</button>
-              <button className="rounded-2xl bg-white px-4 py-3 text-left dark:bg-zinc-900" onClick={onProfile} type="button"><UserRound className="mr-2 inline h-4 w-4" />{text.profile}</button>
+              <button className="rounded-2xl bg-white px-4 py-3 text-left dark:bg-zinc-900" onClick={() => onAccount()} type="button"><UserRound className="mr-2 inline h-4 w-4" />{account ? "My account" : "Log in / Sign up"}</button>
             </div>
           </div>
         </div>
@@ -537,20 +609,9 @@ function Scents(props) {
     updateFilter,
     wishlist,
     onWishlist,
-    onSelectProduct,
-    selectedProduct,
-    recommendations,
-    profile,
-    profileStatus,
-    onProfileSave,
+    onSelect,
     currency
   } = props;
-
-  const [draftProfile, setDraftProfile] = useState(profile?.preferences || {});
-
-  useEffect(() => {
-    setDraftProfile(profile?.preferences || {});
-  }, [profile]);
 
   const visibleProducts = filteredProducts.slice(0, visibleCount);
 
@@ -629,7 +690,7 @@ function Scents(props) {
               product={product}
               wished={wishlist.has(product.id)}
               onWishlist={onWishlist}
-              onSelectProduct={onSelectProduct}
+              onSelect={onSelect}
               currency={currency}
             />
           ))}
@@ -646,21 +707,6 @@ function Scents(props) {
             </button>
           </div>
         )}
-
-        <section className="mt-16 grid gap-8 lg:grid-cols-[0.9fr_1.1fr]">
-          <ProfilePanel
-            brands={brands}
-            categories={categories}
-            genders={genders}
-            longevity={longevity}
-            draftProfile={draftProfile}
-            setDraftProfile={setDraftProfile}
-            status={profileStatus}
-            onSave={onProfileSave}
-          />
-
-          <RecommendationPanel selectedProduct={selectedProduct} recommendations={recommendations} />
-        </section>
       </section>
     </main>
   );
@@ -682,21 +728,42 @@ function FilterSelect({ label, value, values, onChange }) {
   );
 }
 
-function ScentCard({ product, wished, onWishlist, onSelectProduct, index, currency }) {
+function ProductVisual({ product, compact = false }) {
+  if (product.imageUrl) {
+    return <img className={cx("object-contain", compact ? "h-12 w-12 rounded-full bg-white p-1" : "h-full w-full p-4")} src={product.imageUrl} alt={`${product.brand} ${product.name}`} />;
+  }
+  return (
+    <span className={cx(
+      "flex items-center justify-center rounded-full border border-ember/30 bg-white font-display text-ember shadow-sm",
+      compact ? "h-12 w-12 text-sm" : "h-24 w-24 text-3xl"
+    )}>
+      {initials(product)}
+    </span>
+  );
+}
+
+function ScentCard({ product, wished, onWishlist, onSelect, index, currency }) {
   return (
     <article
-      className="group animate-reveal overflow-hidden rounded-[1.75rem] border border-ink/5 bg-white shadow-sm transition duration-300 hover:-translate-y-2 hover:shadow-soft dark:border-white/10 dark:bg-zinc-900"
+      className={cx(
+        "group animate-reveal overflow-hidden rounded-[1.75rem] border border-ink/5 bg-white shadow-sm transition duration-300 hover:-translate-y-2 hover:shadow-soft dark:border-white/10 dark:bg-zinc-900",
+        onSelect && "cursor-pointer focus-within:ring-4 focus-within:ring-ember/20"
+      )}
+      onClick={() => onSelect?.(product)}
       style={{ animationDelay: `${Math.min(index, 8) * 55}ms` }}
     >
       <button
+        aria-label={`Open ${product.brand} ${product.name} scent profile`}
         className="relative flex h-48 w-full items-center justify-center overflow-hidden bg-gradient-to-br from-white via-mist to-orange-50 dark:from-zinc-800 dark:via-zinc-800 dark:to-zinc-900"
-        onClick={() => onSelectProduct(product)}
+        disabled={!onSelect}
+        onClick={(event) => {
+          event.stopPropagation();
+          onSelect?.(product);
+        }}
         type="button"
       >
         <div className="absolute inset-y-0 w-1/2 -skew-x-12 bg-white/35 opacity-0 group-hover:animate-sheen group-hover:opacity-100" />
-        <span className="flex h-24 w-24 items-center justify-center rounded-full border border-ember/30 bg-white font-display text-3xl text-ember shadow-sm">
-          {initials(product)}
-        </span>
+        <ProductVisual product={product} />
       </button>
       <div className="flex min-h-64 flex-col p-5">
         <p className="text-xs font-bold uppercase tracking-[0.22em] text-ember">{product.brand}</p>
@@ -716,7 +783,10 @@ function ScentCard({ product, wished, onWishlist, onSelectProduct, index, curren
                 ? "border-ember bg-ember text-white"
                 : "border-ink/10 bg-white text-ink/60 hover:border-ember hover:text-ember dark:border-white/15 dark:bg-zinc-900 dark:text-white/60"
             )}
-            onClick={() => onWishlist(product.id)}
+            onClick={(event) => {
+              event.stopPropagation();
+              onWishlist(product.id);
+            }}
             type="button"
           >
             <Heart className="mr-1 inline h-4 w-4" fill={wished ? "currentColor" : "none"} />
@@ -725,6 +795,346 @@ function ScentCard({ product, wished, onWishlist, onSelectProduct, index, curren
         </div>
       </div>
     </article>
+  );
+}
+
+const voteOptions = [
+  { id: "love", label: "Love", Icon: Heart },
+  { id: "like", label: "Like", Icon: ThumbsUp },
+  { id: "ok", label: "OK", Icon: Meh },
+  { id: "dislike", label: "Dislike", Icon: ThumbsDown },
+  { id: "hate", label: "Hate", Icon: HeartCrack }
+];
+
+function profileHash(value) {
+  return [...value].reduce((total, character) => (total * 31 + character.charCodeAt(0)) % 997, 17);
+}
+
+function buildScentProfile(product) {
+  const text = `${product.category} ${product.family}`.toLowerCase();
+  const warm = /amber|oriental|oud|wood|spic|gourmand|vanilla|leather|tobacco/.test(text);
+  const fresh = /fresh|citrus|aquatic|green|aromatic|fruity/.test(text);
+  const floral = /floral|flower|rose/.test(text);
+  const score = (key, fallback) => Math.max(28, Math.min(96, fallback + (profileHash(`${product.id}-${key}`) % 15) - 7));
+  const wear = [
+    { label: "Day", value: score("day", fresh || floral ? 82 : 60) },
+    { label: "Night", value: score("night", warm ? 88 : 58) },
+    { label: "Spring", value: score("spring", fresh || floral ? 86 : 55) },
+    { label: "Summer", value: score("summer", fresh ? 90 : 46) },
+    { label: "Autumn", value: score("autumn", warm ? 88 : 62) },
+    { label: "Winter", value: score("winter", warm ? 92 : 48) }
+  ];
+  const accordLabels = [...new Set([product.category, product.family, product.type, product.longevity])]
+    .filter(Boolean)
+    .slice(0, 4);
+  const accords = accordLabels.map((label, index) => ({
+    label,
+    value: Math.max(42, 94 - index * 13 - (profileHash(`${product.id}-${label}`) % 8))
+  }));
+  return {
+    accords,
+    wear,
+    genderPosition: product.gender === "Men" ? 18 : product.gender === "Women" ? 82 : 50
+  };
+}
+
+function ScentProfileModal({ product, account, db, onClose, onRequireLogin }) {
+  const [activeImage, setActiveImage] = useState(0);
+  const [voteState, setVoteState] = useState({
+    totals: { love: 0, like: 0, ok: 0, dislike: 0, hate: 0 },
+    viewerVote: null
+  });
+  const [voting, setVoting] = useState(false);
+  const profile = useMemo(() => buildScentProfile(product), [product]);
+  const images = useMemo(() => {
+    if (Array.isArray(product.images) && product.images.length) return product.images;
+    return product.imageUrl ? [product.imageUrl] : [];
+  }, [product]);
+
+  useEffect(() => {
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    const closeOnEscape = (event) => {
+      if (event.key === "Escape") onClose();
+    };
+    window.addEventListener("keydown", closeOnEscape);
+    return () => {
+      document.body.style.overflow = previousOverflow;
+      window.removeEventListener("keydown", closeOnEscape);
+    };
+  }, [onClose]);
+
+  useEffect(() => {
+    let current = true;
+    if (!db) return () => { current = false; };
+    getScentVotes(db, product.id, account?.id).then((next) => {
+      if (current) setVoteState(next);
+    });
+    return () => { current = false; };
+  }, [account?.id, db, product.id]);
+
+  const submitVote = async (vote) => {
+    if (!account) {
+      onRequireLogin();
+      return;
+    }
+    if (!db || voting) return;
+    setVoting(true);
+    try {
+      setVoteState(await castScentVote(db, account.id, product.id, vote));
+    } finally {
+      setVoting(false);
+    }
+  };
+
+  const moveImage = (direction) => {
+    if (images.length < 2) return;
+    setActiveImage((current) => (current + direction + images.length) % images.length);
+  };
+
+  return (
+    <div
+      aria-label={`${product.name} scent profile`}
+      aria-modal="true"
+      className="fixed inset-0 z-[80] flex items-center justify-center bg-ink/75 p-3 backdrop-blur-md sm:p-6"
+      onMouseDown={(event) => {
+        if (event.target === event.currentTarget) onClose();
+      }}
+      role="dialog"
+    >
+      <div className="relative grid max-h-[94vh] w-full max-w-6xl overflow-y-auto rounded-[2rem] border border-white/60 bg-cream shadow-2xl dark:border-white/10 dark:bg-zinc-950 lg:grid-cols-[0.82fr_1.18fr]">
+        <div className="relative flex min-h-[25rem] flex-col bg-gradient-to-br from-white via-mist to-orange-100 p-5 dark:from-zinc-800 dark:via-zinc-900 dark:to-zinc-950 sm:p-7 lg:min-h-[42rem]">
+          <div className="flex flex-1 items-center justify-center overflow-hidden rounded-[1.5rem] border border-white/70 bg-white/55 dark:border-white/10 dark:bg-white/5">
+            {images.length ? (
+              <img className="h-full max-h-[32rem] w-full object-contain p-8" src={images[activeImage]} alt={`${product.brand} ${product.name}, view ${activeImage + 1}`} />
+            ) : (
+              <div className="flex flex-col items-center gap-5 text-center">
+                <ProductVisual product={product} />
+                <p className="max-w-xs text-xs font-semibold uppercase tracking-[0.2em] text-ink/40 dark:text-white/40">Product image coming soon</p>
+              </div>
+            )}
+          </div>
+
+          <button aria-label="Previous image" className="absolute left-7 top-[42%] rounded-full border border-ink/10 bg-white/90 p-3 shadow-lg transition enabled:hover:-translate-x-1 enabled:hover:text-ember disabled:cursor-not-allowed disabled:opacity-35 dark:border-white/10 dark:bg-zinc-900" disabled={images.length < 2} onClick={() => moveImage(-1)} type="button"><ChevronLeft className="h-5 w-5" /></button>
+          <button aria-label="Next image" className="absolute right-7 top-[42%] rounded-full border border-ink/10 bg-white/90 p-3 shadow-lg transition enabled:hover:translate-x-1 enabled:hover:text-ember disabled:cursor-not-allowed disabled:opacity-35 dark:border-white/10 dark:bg-zinc-900" disabled={images.length < 2} onClick={() => moveImage(1)} type="button"><ChevronRight className="h-5 w-5" /></button>
+
+          <div className="mt-5 flex min-h-2 justify-center gap-2" aria-label={`${Math.max(images.length, 1)} image available`}>
+            {Array.from({ length: Math.max(images.length, 1) }, (_, index) => (
+              <button aria-label={`Show image ${index + 1}`} className={cx("h-2 rounded-full transition-all", activeImage === index ? "w-8 bg-ember" : "w-2 bg-ink/20 dark:bg-white/25")} disabled={!images.length} key={index} onClick={() => setActiveImage(index)} type="button" />
+            ))}
+          </div>
+
+          <div className="mt-5 border-t border-ink/10 pt-5 dark:border-white/10">
+            <p className="text-xs font-bold uppercase tracking-[0.25em] text-ink/45 dark:text-white/45">Rate this scent</p>
+            <div className="mt-3 grid grid-cols-5 gap-2">
+              {voteOptions.map(({ id, label, Icon }) => {
+                const selected = voteState.viewerVote === id;
+                return (
+                  <button aria-label={`${label}, ${voteState.totals[id]} votes`} className={cx("group/vote rounded-2xl border px-1 py-3 text-center transition disabled:cursor-wait", selected ? "border-ember bg-ember text-white" : "border-ink/10 bg-white/70 hover:border-ember hover:text-ember dark:border-white/10 dark:bg-white/5")} disabled={voting} key={id} onClick={() => submitVote(id)} type="button">
+                    <Icon className="mx-auto h-5 w-5" fill={id === "love" && selected ? "currentColor" : "none"} />
+                    <span className="mt-1 block text-[10px] font-bold sm:text-xs">{label}</span>
+                    <span className={cx("mt-1 block text-xs", selected ? "text-white/75" : "text-ink/40 dark:text-white/40")}>{voteState.totals[id]}</span>
+                  </button>
+                );
+              })}
+            </div>
+            {!account && <button className="mt-3 flex items-center gap-2 text-xs font-bold text-ember hover:underline" onClick={onRequireLogin} type="button"><Lock className="h-3.5 w-3.5" />Log in to vote</button>}
+          </div>
+        </div>
+
+        <div className="relative p-6 sm:p-9 lg:p-12">
+          <div className="absolute right-5 top-5 flex gap-2">
+            <button aria-label="Full scent profile coming soon" className="rounded-full border border-ink/10 bg-white p-2.5 text-ink/35 dark:border-white/10 dark:bg-zinc-900 dark:text-white/35" disabled title="Full-page scent profiles are coming soon" type="button"><Maximize2 className="h-5 w-5" /></button>
+            <button aria-label="Close scent profile" className="rounded-full bg-ink p-2.5 text-white transition hover:rotate-90 hover:bg-ember dark:bg-white dark:text-ink" onClick={onClose} type="button"><X className="h-5 w-5" /></button>
+          </div>
+
+          <p className="pr-24 text-xs font-bold uppercase tracking-[0.28em] text-ember">{product.brand}</p>
+          <h2 className="mt-3 pr-20 font-display text-4xl leading-tight sm:text-5xl">{product.name}</h2>
+          <p className="mt-3 text-sm font-semibold text-ink/50 dark:text-white/50">{product.type} · {product.gender} · {product.longevity}</p>
+
+          <section className="mt-9">
+            <p className="text-xs font-bold uppercase tracking-[0.25em] text-ink/45 dark:text-white/45">Main accords</p>
+            <div className="mt-4 space-y-3">
+              {profile.accords.map((accord) => (
+                <div key={accord.label}>
+                  <div className="mb-1.5 flex justify-between text-xs font-semibold"><span>{accord.label}</span><span className="text-ink/35 dark:text-white/35">{accord.value}%</span></div>
+                  <div className="h-2 overflow-hidden rounded-full bg-ink/8 dark:bg-white/10"><div className="h-full rounded-full bg-gradient-to-r from-ember to-orange-300" style={{ width: `${accord.value}%` }} /></div>
+                </div>
+              ))}
+            </div>
+          </section>
+
+          <section className="mt-9">
+            <p className="text-xs font-bold uppercase tracking-[0.25em] text-ink/45 dark:text-white/45">Best time to wear</p>
+            <div className="mt-4 grid gap-x-6 gap-y-4 sm:grid-cols-2">
+              {profile.wear.map((item) => (
+                <div className="grid grid-cols-[4.5rem_1fr] items-center gap-3" key={item.label}>
+                  <span className="rounded-lg border border-ink/10 bg-white px-2 py-1.5 text-center text-[11px] font-bold uppercase tracking-wide dark:border-white/10 dark:bg-zinc-900">{item.label}</span>
+                  <div className="h-2 overflow-hidden rounded-full bg-ink/8 dark:bg-white/10"><div className="h-full rounded-full bg-moss" style={{ width: `${item.value}%` }} /></div>
+                </div>
+              ))}
+            </div>
+          </section>
+
+          <section className="mt-9">
+            <div className="flex justify-between text-xs font-bold uppercase tracking-[0.18em] text-ink/45 dark:text-white/45"><span>Masculine</span><span>Feminine</span></div>
+            <div className="relative mt-4 h-2 rounded-full bg-gradient-to-r from-slate-500 via-amber-100 to-rose-400">
+              <span className="absolute top-1/2 h-5 w-5 -translate-x-1/2 -translate-y-1/2 rounded-full border-4 border-white bg-ink shadow-md dark:border-zinc-950 dark:bg-white" style={{ left: `${profile.genderPosition}%` }} />
+            </div>
+          </section>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function AccountPage({
+  account,
+  notice,
+  onAuth,
+  onLogout,
+  profile,
+  profileStatus,
+  onProfileSave,
+  brands,
+  categories,
+  genders,
+  longevity,
+  recommendations,
+  wishlistProducts,
+  onWishlist,
+  currency
+}) {
+  const [draftProfile, setDraftProfile] = useState(profile?.preferences || {});
+
+  useEffect(() => {
+    setDraftProfile(profile?.preferences || {});
+  }, [profile]);
+
+  if (!account) {
+    return (
+      <main className="min-h-screen bg-cream px-4 pb-20 pt-32 dark:bg-zinc-950 sm:px-6 lg:px-8">
+        <div className="mx-auto grid max-w-6xl overflow-hidden rounded-[2.5rem] bg-white shadow-soft dark:bg-zinc-900 lg:grid-cols-[0.9fr_1.1fr]">
+          <section className="bg-ink p-8 text-white sm:p-12">
+            <span className="inline-flex rounded-2xl bg-white/10 p-3"><Lock className="h-6 w-6 text-ember" /></span>
+            <p className="mt-8 text-xs font-bold uppercase tracking-[0.3em] text-ember">Members only</p>
+            <h1 className="mt-4 font-display text-5xl leading-tight">Join us to unlock more amazing features!</h1>
+            <p className="mt-5 leading-8 text-white/65">Create an account or log in to save perfumes, shape your scent profile, and receive recommendations made for you.</p>
+            <div className="mt-10 grid gap-3">
+              {["A wishlist that follows your account", "Your private scent preferences", "Personal fragrance recommendations"].map((feature) => (
+                <div className="flex items-center gap-3 rounded-2xl bg-white/8 p-4" key={feature}>
+                  <Lock className="h-4 w-4 text-ember" />
+                  <span className="text-sm font-semibold">{feature}</span>
+                </div>
+              ))}
+            </div>
+          </section>
+          <AuthPanel notice={notice} onAuth={onAuth} />
+        </div>
+      </main>
+    );
+  }
+
+  return (
+    <main className="min-h-screen bg-cream pt-20 dark:bg-zinc-950">
+      <section className="bg-ink px-4 py-14 text-white sm:px-6 lg:px-8">
+        <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-6">
+          <div>
+            <p className="text-xs font-bold uppercase tracking-[0.3em] text-ember">My account</p>
+            <h1 className="mt-3 font-display text-5xl">Welcome, {account.name}.</h1>
+            <p className="mt-3 text-white/55">{account.email}</p>
+          </div>
+          <button className="rounded-full border border-white/20 px-5 py-3 text-sm font-bold transition hover:border-ember hover:text-ember" onClick={onLogout} type="button">
+            <LogOut className="mr-2 inline h-4 w-4" />Sign out
+          </button>
+        </div>
+      </section>
+
+      <section className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
+        <div className="grid gap-8 lg:grid-cols-[0.9fr_1.1fr]">
+          <ProfilePanel
+            brands={brands}
+            categories={categories}
+            genders={genders}
+            longevity={longevity}
+            draftProfile={draftProfile}
+            setDraftProfile={setDraftProfile}
+            status={profileStatus}
+            onSave={onProfileSave}
+          />
+          <RecommendationPanel recommendations={recommendations} />
+        </div>
+
+        <section className="mt-14">
+          <p className="text-xs font-bold uppercase tracking-[0.28em] text-ember">Saved for later</p>
+          <h2 className="mt-3 font-display text-4xl">Your wishlist</h2>
+          {wishlistProducts.length ? (
+            <div className="mt-7 grid gap-5 sm:grid-cols-2 xl:grid-cols-4">
+              {wishlistProducts.map((product, index) => (
+                <ScentCard key={product.id} product={product} wished onWishlist={onWishlist} index={index} currency={currency} />
+              ))}
+            </div>
+          ) : (
+            <div className="mt-7 rounded-[2rem] border border-dashed border-ink/15 bg-white p-10 text-center dark:border-white/15 dark:bg-zinc-900">
+              <Heart className="mx-auto h-7 w-7 text-ember" />
+              <p className="mt-4 font-semibold">Your wishlist is waiting for its first scent.</p>
+            </div>
+          )}
+        </section>
+      </section>
+    </main>
+  );
+}
+
+function AuthPanel({ notice, onAuth }) {
+  const [mode, setMode] = useState("login");
+  const [error, setError] = useState("");
+  const [submitting, setSubmitting] = useState(false);
+
+  const submit = async (event) => {
+    event.preventDefault();
+    setError("");
+    setSubmitting(true);
+    const data = new FormData(event.currentTarget);
+    const values = Object.fromEntries(data.entries());
+    try {
+      await onAuth(mode, values);
+    } catch (caught) {
+      setError(caught.message || "We could not complete that request.");
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  return (
+    <section className="p-8 sm:p-12">
+      <div className="flex rounded-full bg-mist p-1 dark:bg-zinc-800">
+        {[{ id: "login", label: "Log in" }, { id: "register", label: "Create account" }].map((option) => (
+          <button className={cx("flex-1 rounded-full px-4 py-3 text-sm font-bold transition", mode === option.id && "bg-white text-ember shadow-sm dark:bg-zinc-950")} key={option.id} onClick={() => { setMode(option.id); setError(""); }} type="button">{option.label}</button>
+        ))}
+      </div>
+      <h2 className="mt-8 font-display text-4xl">{mode === "login" ? "Good to see you again." : "Make the grove yours."}</h2>
+      {notice && <p className="mt-4 rounded-2xl bg-orange-50 p-4 text-sm font-semibold text-ember dark:bg-ember/10">{notice}</p>}
+      {error && <p className="mt-4 rounded-2xl bg-red-50 p-4 text-sm font-semibold text-red-700 dark:bg-red-950/40 dark:text-red-300" role="alert">{error}</p>}
+      <form className="mt-7 grid gap-4" onSubmit={submit}>
+        {mode === "register" && <AuthField label="Name" name="name" type="text" autoComplete="name" />}
+        <AuthField label="Email address" name="email" type="email" autoComplete="email" />
+        <AuthField label="Password" name="password" type="password" autoComplete={mode === "login" ? "current-password" : "new-password"} minLength={8} />
+        <button className="mt-2 rounded-full bg-ember px-6 py-4 font-bold text-white transition hover:-translate-y-1 hover:bg-ink disabled:cursor-wait disabled:opacity-60" disabled={submitting} type="submit">
+          {submitting ? "Please wait..." : mode === "login" ? "Log in" : "Create my account"}
+        </button>
+      </form>
+      <p className="mt-5 text-xs leading-5 text-ink/45 dark:text-white/45">This version stores account data securely in this browser. Use a server-backed authentication service before deploying accounts across devices.</p>
+    </section>
+  );
+}
+
+function AuthField({ label, ...inputProps }) {
+  return (
+    <label className="catalog-field">
+      <span>{label}</span>
+      <input required {...inputProps} />
+    </label>
   );
 }
 
@@ -766,19 +1176,15 @@ function ProfilePanel({ brands, categories, genders, longevity, draftProfile, se
   );
 }
 
-function RecommendationPanel({ selectedProduct, recommendations }) {
+function RecommendationPanel({ recommendations }) {
   return (
     <div className="rounded-[2rem] bg-ink p-6 text-white shadow-soft">
       <p className="text-xs font-bold uppercase tracking-[0.28em] text-ember">Recommendations</p>
-      <h2 className="mt-3 font-display text-3xl">
-        {selectedProduct ? `Similar to ${selectedProduct.name}` : "Recommended for your profile"}
-      </h2>
+      <h2 className="mt-3 font-display text-3xl">Recommended for your profile</h2>
       <div className="mt-6 grid gap-3">
         {recommendations.map((product) => (
           <div className="flex items-center gap-4 rounded-2xl bg-white/8 p-4 backdrop-blur" key={product.id}>
-            <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-white text-sm font-bold text-ember">
-              {initials(product)}
-            </span>
+            <ProductVisual product={product} compact />
             <div>
               <h3 className="font-bold">{product.name}</h3>
               <p className="text-sm text-white/60">{product.brand} / {product.category}</p>
