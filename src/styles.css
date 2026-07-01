@@ -22,7 +22,7 @@
   }
 
   .dark body {
-    background: #09090b;
+    background: #1c1815;
   }
 
   .light body {
@@ -57,17 +57,71 @@
 }
 
 @layer components {
+  .eyebrow {
+    @apply text-xs font-bold uppercase tracking-[0.28em] text-ember;
+  }
+
+  .eyebrow-moss {
+    @apply text-xs font-bold uppercase tracking-[0.28em] text-moss dark:text-[#9aaa91];
+  }
+
+  .grove-divider {
+    @apply relative my-10 h-px w-full;
+    background-color: rgb(184 147 90 / 0.25);
+  }
+
+  .accord-fill {
+    @apply relative h-full rounded-full;
+  }
+
+  .accord-fill::after {
+    content: "";
+    position: absolute;
+    right: 0;
+    top: 50%;
+    height: 0.75rem;
+    width: 0.75rem;
+    transform: translate(50%, -50%);
+    border-radius: 9999px;
+    border: 2px solid #ffffff;
+    background-color: currentColor;
+    box-shadow: 0 1px 2px rgb(0 0 0 / 0.05);
+  }
+
+  .dark .accord-fill::after {
+    border-color: #241f1a;
+  }
+
   .catalog-field {
     @apply flex flex-col gap-2 text-xs font-bold uppercase tracking-[0.22em] text-ink/45;
   }
 
   .catalog-field input,
   .catalog-field select {
-    @apply h-12 w-full rounded-2xl border border-ink/10 bg-cream px-4 text-sm font-semibold normal-case tracking-normal text-ink outline-none transition focus:border-ember focus:bg-white focus:ring-4 focus:ring-ember/10 dark:border-white/15 dark:bg-zinc-800 dark:text-white dark:focus:bg-zinc-800;
+    @apply h-12 w-full rounded-2xl border border-ink/10 bg-cream px-4 text-sm font-semibold normal-case tracking-normal text-ink outline-none transition focus:bg-white focus:ring-4 focus:ring-ember/10 dark:border-white/15 dark:text-white;
+  }
+
+  .catalog-field input:focus,
+  .catalog-field select:focus {
+    border-color: #b8935a;
+  }
+
+  .dark .catalog-field input,
+  .dark .catalog-field select {
+    background-color: rgb(36 31 26 / 0.8);
+  }
+
+  .dark .catalog-field input:focus,
+  .dark .catalog-field select:focus {
+    background-color: #241f1a;
   }
 
   .brand-pill {
-    @apply rounded-full border border-ink/10 bg-cream px-4 py-2 text-sm font-semibold text-ink/65 transition hover:border-ember hover:text-ember dark:border-white/15 dark:bg-zinc-800 dark:text-white/65;
+    @apply rounded-full border border-ink/10 bg-cream px-4 py-2 text-sm font-semibold text-ink/65 transition hover:border-ember hover:text-ember dark:border-white/15 dark:text-white/65;
+  }
+
+  .dark .brand-pill {
+    background-color: rgb(36 31 26 / 0.8);
   }
 
   .brand-pill span {

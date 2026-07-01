@@ -82,6 +82,14 @@ function initials(product) {
     .toUpperCase();
 }
 
+function familyChipClass(family = "") {
+  const value = family.toLowerCase();
+  if (/wood|oud|earth|leather|chypre/.test(value)) return "bg-moss/10 text-moss dark:bg-moss/25 dark:text-[#b8c5b1]";
+  if (/floral|rose|flower/.test(value)) return "bg-rose-50 text-rose-700 dark:bg-rose-950/35 dark:text-rose-300";
+  if (/citrus|fresh|aquatic|green/.test(value)) return "bg-amber-50 text-ember dark:bg-ember/10";
+  return "bg-mist text-ink/55 dark:bg-white/10 dark:text-white/60";
+}
+
 function App() {
   const [route, setRoute] = useState("home");
   const [menuOpen, setMenuOpen] = useState(false);
@@ -257,7 +265,7 @@ function App() {
   };
 
   return (
-    <div className="min-h-screen overflow-hidden bg-cream font-body text-ink transition-colors dark:bg-zinc-950 dark:text-stone-100">
+    <div className="min-h-screen overflow-hidden bg-cream font-body text-ink transition-colors dark:bg-charcoal dark:text-stone-100">
       <Navigation
         route={route}
         setRoute={setRoute}
@@ -386,14 +394,18 @@ function Navigation({
   };
 
   return (
-    <header className="fixed left-0 right-0 top-0 z-50 border-b border-white/40 bg-cream/90 backdrop-blur-xl transition-colors dark:border-white/10 dark:bg-zinc-950/90">
+    <header className="fixed left-0 right-0 top-0 z-50 border-b border-gold/25 bg-cream/90 backdrop-blur-xl transition-colors dark:border-gold/15 dark:bg-charcoal/90">
       <div className="mx-auto flex h-20 max-w-[90rem] items-center justify-between gap-5 px-4 sm:px-6 lg:px-8">
         <button
           className="group flex items-center gap-3"
           onClick={() => navAction("home")}
           type="button"
         >
-          <img className="h-12 w-12 rounded-full" src="/elixirgrove-logo.png" alt="Elixir Grove" />
+          <span className="relative flex h-14 w-14 items-center justify-center">
+            <span className="absolute inset-0 hidden rounded-full bg-gradient-to-br from-gold/35 via-ember/20 to-moss/25 blur-sm dark:block" />
+            <span className="absolute inset-1 hidden rounded-full bg-cream/95 ring-1 ring-gold/25 dark:block" />
+            <img className="relative h-12 w-12 rounded-full" src="/elixirgrove-logo.png" alt="Elixir Grove" />
+          </span>
           <span className="text-left">
             <span className="block font-display text-2xl leading-none">Elixir</span>
             <span className="block text-sm uppercase tracking-[0.36em] text-ember">Grove</span>
@@ -417,14 +429,14 @@ function Navigation({
 
               {item.id === "scents" && (
                 <div className="pointer-events-none absolute left-1/2 top-full w-[520px] -translate-x-1/2 pt-5 opacity-0 transition duration-200 group-hover:pointer-events-auto group-hover:opacity-100 group-focus-within:pointer-events-auto group-focus-within:opacity-100">
-                  <div className="rounded-3xl border border-white/70 bg-white/95 p-5 shadow-soft dark:border-white/10 dark:bg-zinc-900/95">
+                  <div className="rounded-3xl border border-white/70 bg-white/95 p-5 shadow-soft dark:border-white/10 dark:bg-charcoalPanel/95">
                   <p className="mb-4 text-xs font-bold uppercase tracking-[0.28em] text-ink/45">
                     Available brands
                   </p>
                   <div className="grid grid-cols-3 gap-2">
                     {brands.slice(0, 15).map(({ brand, count }) => (
                       <button
-                        className="rounded-2xl bg-mist px-3 py-2 text-left text-sm transition hover:bg-ember hover:text-white dark:bg-zinc-800"
+                        className="rounded-2xl bg-mist px-3 py-2 text-left text-sm transition hover:bg-ember hover:text-white dark:bg-charcoalPanel/80"
                         key={brand}
                         onClick={() => showScents({ brand })}
                         type="button"
@@ -442,18 +454,18 @@ function Navigation({
 
         <div className="flex items-center gap-2">
           <form className="relative hidden xl:block" onSubmit={submitSearch}>
-            <input aria-label={text.search} className="h-10 w-52 rounded-full border border-ink/10 bg-white/75 pl-4 pr-10 text-sm outline-none transition focus:w-64 focus:border-ember dark:border-white/15 dark:bg-zinc-900" onChange={(event) => setSearchQuery(event.target.value)} placeholder={text.search} value={searchQuery} />
+            <input aria-label={text.search} className="h-10 w-52 rounded-full border border-ink/10 bg-white/75 pl-4 pr-10 text-sm outline-none transition focus:w-64 focus:border-ember dark:border-white/15 dark:bg-charcoalPanel" onChange={(event) => setSearchQuery(event.target.value)} placeholder={text.search} value={searchQuery} />
             <button aria-label="Submit search" className="absolute right-1 top-1 rounded-full p-2 text-ink/55 hover:text-ember dark:text-white/65" type="submit"><Search className="h-4 w-4" /></button>
           </form>
-          <select aria-label="Currency" className="hidden h-10 rounded-full border border-ink/10 bg-white px-3 text-xs font-bold outline-none xl:block dark:border-white/15 dark:bg-zinc-900" onChange={(event) => setCurrency(event.target.value)} value={currency}>
+          <select aria-label="Currency" className="hidden h-10 rounded-full border border-ink/10 bg-white px-3 text-xs font-bold outline-none xl:block dark:border-white/15 dark:bg-charcoalPanel" onChange={(event) => setCurrency(event.target.value)} value={currency}>
             <option value="PHP">PHP</option><option value="USD">USD</option><option value="EUR">EUR</option>
           </select>
-          <button aria-label={language === "en" ? "Switch to Filipino" : "Switch to English"} className="hidden h-10 items-center gap-1 rounded-full border border-ink/10 bg-white px-3 text-xs font-bold xl:flex dark:border-white/15 dark:bg-zinc-900" onClick={() => setLanguage((current) => current === "en" ? "fil" : "en")} type="button"><Languages className="h-4 w-4" />{language.toUpperCase()}</button>
-          <button aria-label={darkMode ? "Use light mode" : "Use dark mode"} className="hidden rounded-full border border-ink/10 bg-white p-2.5 transition hover:text-ember sm:block dark:border-white/15 dark:bg-zinc-900" onClick={() => setDarkMode((current) => !current)} type="button">{darkMode ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}</button>
-          <button aria-label={account ? `Account: ${account.name}` : "Log in or register"} className="hidden rounded-full border border-ink/10 bg-white p-2.5 transition hover:text-ember sm:block dark:border-white/15 dark:bg-zinc-900" onClick={() => onAccount()} type="button"><UserRound className="h-4 w-4" /></button>
+          <button aria-label={language === "en" ? "Switch to Filipino" : "Switch to English"} className="hidden h-10 items-center gap-1 rounded-full border border-ink/10 bg-white px-3 text-xs font-bold xl:flex dark:border-white/15 dark:bg-charcoalPanel" onClick={() => setLanguage((current) => current === "en" ? "fil" : "en")} type="button"><Languages className="h-4 w-4" />{language.toUpperCase()}</button>
+          <button aria-label={darkMode ? "Use light mode" : "Use dark mode"} className="hidden rounded-full border border-ink/10 bg-white p-2.5 transition hover:text-ember sm:block dark:border-white/15 dark:bg-charcoalPanel" onClick={() => setDarkMode((current) => !current)} type="button">{darkMode ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}</button>
+          <button aria-label={account ? `Account: ${account.name}` : "Log in or register"} className="hidden rounded-full border border-ink/10 bg-white p-2.5 transition hover:text-ember sm:block dark:border-white/15 dark:bg-charcoalPanel" onClick={() => onAccount()} type="button"><UserRound className="h-4 w-4" /></button>
           <button
             aria-label={`${text.wishlist}: ${wishlistCount}`}
-            className="hidden rounded-full border border-ink/10 bg-white px-3 py-2 text-sm font-semibold shadow-sm transition hover:border-ember hover:text-ember md:flex dark:border-white/15 dark:bg-zinc-900"
+            className="hidden rounded-full border border-ink/10 bg-white px-3 py-2 text-sm font-semibold shadow-sm transition hover:border-ember hover:text-ember md:flex dark:border-white/15 dark:bg-charcoalPanel"
             onClick={() => onAccount(account ? "" : "Join us to unlock your wishlist!")}
             type="button"
           >
@@ -471,15 +483,15 @@ function Navigation({
       </div>
 
       {menuOpen && (
-        <div className="border-t border-white/60 bg-cream px-4 py-5 lg:hidden dark:border-white/10 dark:bg-zinc-950">
+        <div className="border-t border-white/60 bg-cream px-4 py-5 lg:hidden dark:border-white/10 dark:bg-charcoal">
           <div className="grid gap-3">
             <form className="relative" onSubmit={submitSearch}>
-              <input aria-label={text.search} className="h-12 w-full rounded-2xl border border-ink/10 bg-white px-4 pr-12 outline-none dark:border-white/15 dark:bg-zinc-900" onChange={(event) => setSearchQuery(event.target.value)} placeholder={text.search} value={searchQuery} />
+              <input aria-label={text.search} className="h-12 w-full rounded-2xl border border-ink/10 bg-white px-4 pr-12 outline-none dark:border-white/15 dark:bg-charcoalPanel" onChange={(event) => setSearchQuery(event.target.value)} placeholder={text.search} value={searchQuery} />
               <button aria-label="Submit search" className="absolute right-2 top-2 rounded-xl p-2" type="submit"><Search /></button>
             </form>
             {navItems.map((item) => (
               <button
-                className="rounded-2xl bg-white px-4 py-3 text-left font-semibold shadow-sm dark:bg-zinc-900"
+                className="rounded-2xl bg-white px-4 py-3 text-left font-semibold shadow-sm dark:bg-charcoalPanel"
                 key={item.id}
                 onClick={() => navAction(item.id)}
                 type="button"
@@ -488,10 +500,10 @@ function Navigation({
               </button>
             ))}
             <div className="grid grid-cols-2 gap-3">
-              <select aria-label="Currency" className="rounded-2xl bg-white px-4 py-3 dark:bg-zinc-900" onChange={(event) => setCurrency(event.target.value)} value={currency}><option value="PHP">PHP</option><option value="USD">USD</option><option value="EUR">EUR</option></select>
-              <button className="rounded-2xl bg-white px-4 py-3 text-left dark:bg-zinc-900" onClick={() => setLanguage((current) => current === "en" ? "fil" : "en")} type="button"><Languages className="mr-2 inline h-4 w-4" />{language.toUpperCase()}</button>
-              <button className="rounded-2xl bg-white px-4 py-3 text-left dark:bg-zinc-900" onClick={() => setDarkMode((current) => !current)} type="button">{darkMode ? <Sun className="mr-2 inline h-4 w-4" /> : <Moon className="mr-2 inline h-4 w-4" />}Theme</button>
-              <button className="rounded-2xl bg-white px-4 py-3 text-left dark:bg-zinc-900" onClick={() => onAccount()} type="button"><UserRound className="mr-2 inline h-4 w-4" />{account ? "My account" : "Log in / Sign up"}</button>
+              <select aria-label="Currency" className="rounded-2xl bg-white px-4 py-3 dark:bg-charcoalPanel" onChange={(event) => setCurrency(event.target.value)} value={currency}><option value="PHP">PHP</option><option value="USD">USD</option><option value="EUR">EUR</option></select>
+              <button className="rounded-2xl bg-white px-4 py-3 text-left dark:bg-charcoalPanel" onClick={() => setLanguage((current) => current === "en" ? "fil" : "en")} type="button"><Languages className="mr-2 inline h-4 w-4" />{language.toUpperCase()}</button>
+              <button className="rounded-2xl bg-white px-4 py-3 text-left dark:bg-charcoalPanel" onClick={() => setDarkMode((current) => !current)} type="button">{darkMode ? <Sun className="mr-2 inline h-4 w-4" /> : <Moon className="mr-2 inline h-4 w-4" />}Theme</button>
+              <button className="rounded-2xl bg-white px-4 py-3 text-left dark:bg-charcoalPanel" onClick={() => onAccount()} type="button"><UserRound className="mr-2 inline h-4 w-4" />{account ? "My account" : "Log in / Sign up"}</button>
             </div>
           </div>
         </div>
@@ -553,7 +565,7 @@ function Home({ showScents, products }) {
         <div className={cx("relative mx-auto flex min-h-[calc(100vh-5rem)] max-w-7xl items-center px-6 py-20 lg:px-8", heroSlides[activeSlide].position === "right" && "justify-end")}>
           <div className="max-w-xl text-white" key={activeSlide}>
             <p className="animate-reveal text-sm font-bold uppercase tracking-[0.32em] text-ember">{heroSlides[activeSlide].brand}</p>
-            <h1 className="mt-4 animate-reveal font-display text-5xl leading-tight sm:text-6xl lg:text-7xl">{heroSlides[activeSlide].name}</h1>
+            <h1 className="mt-4 animate-reveal font-display text-5xl leading-tight tracking-tight sm:text-6xl lg:text-7xl">{heroSlides[activeSlide].name}</h1>
             <p className="mt-6 animate-reveal text-base leading-8 text-white/80 sm:text-lg">{heroSlides[activeSlide].description}</p>
             <button className="mt-8 rounded-none border border-white px-7 py-3 text-sm font-bold uppercase tracking-[0.18em] transition hover:border-ember hover:bg-ember" onClick={() => showScents()} type="button">
               Discover the collection
@@ -567,7 +579,7 @@ function Home({ showScents, products }) {
         </div>
       </section>
 
-      <section id="scents-preview" className="flex min-h-screen flex-col justify-center overflow-hidden bg-cream py-16 transition-colors dark:bg-zinc-950">
+      <section id="scents-preview" className="flex min-h-screen flex-col justify-center overflow-hidden bg-cream py-16 transition-colors dark:bg-charcoal">
         <div className="mx-auto w-full max-w-7xl px-6 lg:px-8">
           <div className="flex flex-col justify-between gap-6 md:flex-row md:items-end">
             <div className="max-w-2xl">
@@ -581,8 +593,8 @@ function Home({ showScents, products }) {
         <div className="mt-10 overflow-hidden">
           <div className="scent-track flex gap-5 px-3">
             {scrollingProducts.map((product, index) => (
-              <button className="group w-64 shrink-0 bg-white p-4 text-left shadow-sm transition hover:-translate-y-2 hover:shadow-soft dark:bg-zinc-900" key={`${product.id}-${index}`} onClick={() => showScents({ brand: product.brand })} type="button">
-                <div className="flex h-40 items-center justify-center bg-mist dark:bg-zinc-800">
+              <button className="group w-64 shrink-0 bg-white p-4 text-left shadow-sm transition hover:-translate-y-2 hover:shadow-soft dark:bg-charcoalPanel" key={`${product.id}-${index}`} onClick={() => showScents({ brand: product.brand })} type="button">
+                <div className="flex h-40 items-center justify-center bg-mist dark:bg-charcoalPanel/80">
                   <span className="flex h-24 w-24 items-center justify-center rounded-full border border-ember/30 bg-white font-display text-3xl text-ember">{initials(product)}</span>
                 </div>
                 <p className="mt-5 text-xs font-bold uppercase tracking-[0.2em] text-ember">{product.brand}</p>
@@ -618,7 +630,7 @@ function Scents(props) {
   const visibleProducts = filteredProducts.slice(0, visibleCount);
 
   return (
-    <main className="bg-cream pt-20 transition-colors dark:bg-zinc-950">
+    <main className="bg-cream pt-20 transition-colors dark:bg-charcoal">
       <section className="relative overflow-hidden bg-ink px-4 py-20 text-white sm:px-6 lg:px-8">
         <div className="absolute inset-0 opacity-30">
           <img className="h-full w-full object-cover" src="/images/banner/mutiny.jpg" alt="Perfume bottles" />
@@ -626,7 +638,7 @@ function Scents(props) {
         <div className="absolute inset-0 bg-gradient-to-r from-ink via-ink/80 to-ink/55" />
         <div className="relative mx-auto max-w-7xl">
           <p className="text-sm font-bold uppercase tracking-[0.32em] text-ember">Scents</p>
-          <h1 className="mt-4 max-w-4xl font-display text-6xl leading-tight">Discover your next signature scent.</h1>
+          <h1 className="mt-4 max-w-4xl font-display text-6xl leading-tight tracking-tight">Discover your next signature scent.</h1>
           <p className="mt-5 max-w-2xl text-lg leading-8 text-white/72">
             Browse {brands.length} fragrance houses across {categories.length} scent families, then save the ones that speak to you.
           </p>
@@ -634,7 +646,7 @@ function Scents(props) {
       </section>
 
       <section className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
-        <div className="rounded-[2rem] border border-white/70 bg-white p-5 shadow-soft dark:border-white/10 dark:bg-zinc-900">
+        <div className="rounded-[2rem] border border-white/70 bg-white p-5 shadow-soft dark:border-white/10 dark:bg-charcoalPanel">
           <div className="grid gap-4 lg:grid-cols-[1.4fr_repeat(4,1fr)]">
             <label className="catalog-field">
               <span>Search</span>
@@ -679,7 +691,7 @@ function Scents(props) {
           <p className="text-sm font-semibold uppercase tracking-[0.22em] text-ink/50">
             {filteredProducts.length} scents found from {brands.length} brands
           </p>
-          <p className="rounded-full bg-mist px-4 py-2 text-sm text-ink/60 dark:bg-zinc-900 dark:text-white/60">
+          <p className="rounded-full bg-mist px-4 py-2 text-sm text-ink/60 dark:bg-charcoalPanel dark:text-white/60">
             Refine the collection to find your perfect match.
           </p>
         </div>
@@ -748,7 +760,7 @@ function ScentCard({ product, wished, onWishlist, onSelect, index, currency }) {
   return (
     <article
       className={cx(
-        "group animate-reveal overflow-hidden rounded-[1.75rem] border border-ink/5 bg-white shadow-sm transition duration-300 hover:-translate-y-2 hover:shadow-soft dark:border-white/10 dark:bg-zinc-900",
+        "group animate-reveal overflow-hidden rounded-[1.75rem] border border-ink/5 bg-white shadow-sm transition duration-300 hover:-translate-y-2 hover:shadow-soft dark:border-white/10 dark:bg-charcoalPanel",
         onSelect && "cursor-pointer focus-within:ring-4 focus-within:ring-ember/20"
       )}
       onClick={() => onSelect?.(product)}
@@ -756,7 +768,7 @@ function ScentCard({ product, wished, onWishlist, onSelect, index, currency }) {
     >
       <button
         aria-label={`Open ${product.brand} ${product.name} scent profile`}
-        className="relative flex h-48 w-full items-center justify-center overflow-hidden bg-gradient-to-br from-white via-mist to-orange-50 dark:from-zinc-800 dark:via-zinc-800 dark:to-zinc-900"
+        className="relative flex h-48 w-full items-center justify-center overflow-hidden bg-gradient-to-br from-white via-mist to-orange-50 dark:from-charcoalPanel dark:via-charcoalPanel dark:to-ember/5"
         disabled={!onSelect}
         onClick={(event) => {
           event.stopPropagation();
@@ -775,6 +787,7 @@ function ScentCard({ product, wished, onWishlist, onSelect, index, currency }) {
         <div className="mt-5 flex flex-wrap gap-2">
           <span className="rounded-full bg-orange-50 px-3 py-1 text-xs font-semibold text-ember">{product.category}</span>
           <span className="rounded-full bg-mist px-3 py-1 text-xs font-semibold text-ink/55">{product.longevity}</span>
+          {product.family && <span className={cx("rounded-full px-3 py-1 text-xs font-semibold", familyChipClass(product.family))}>{product.family}</span>}
         </div>
         <div className="mt-auto flex items-center justify-between pt-6">
           <span className="text-sm font-semibold text-ink/50">{product.family}</span>
@@ -783,7 +796,7 @@ function ScentCard({ product, wished, onWishlist, onSelect, index, currency }) {
               "rounded-full border px-3 py-2 text-xs font-bold transition",
               wished
                 ? "border-ember bg-ember text-white"
-                : "border-ink/10 bg-white text-ink/60 hover:border-ember hover:text-ember dark:border-white/15 dark:bg-zinc-900 dark:text-white/60"
+                : "border-ink/10 bg-white text-ink/60 hover:border-ember hover:text-ember dark:border-white/15 dark:bg-charcoalPanel dark:text-white/60"
             )}
             onClick={(event) => {
               event.stopPropagation();
@@ -906,8 +919,8 @@ function ScentProfileModal({ product, account, db, onClose, onRequireLogin }) {
       }}
       role="dialog"
     >
-      <div className="relative grid max-h-[94vh] w-full max-w-6xl overflow-y-auto rounded-[2rem] border border-white/60 bg-cream shadow-2xl dark:border-white/10 dark:bg-zinc-950 lg:grid-cols-[0.82fr_1.18fr]">
-        <div className="relative flex min-h-[25rem] flex-col bg-gradient-to-br from-white via-mist to-orange-100 p-5 dark:from-zinc-800 dark:via-zinc-900 dark:to-zinc-950 sm:p-7 lg:min-h-[42rem]">
+      <div className="relative grid max-h-[94vh] w-full max-w-6xl overflow-y-auto rounded-[2rem] border border-white/60 bg-cream shadow-2xl dark:border-white/10 dark:bg-charcoal lg:grid-cols-[0.82fr_1.18fr]">
+        <div className="relative flex min-h-[25rem] flex-col bg-gradient-to-br from-white via-mist to-orange-100 p-5 dark:from-charcoalPanel dark:via-charcoalPanel dark:to-charcoal sm:p-7 lg:min-h-[42rem]">
           <div className="flex flex-1 items-center justify-center overflow-hidden rounded-[1.5rem] border border-white/70 bg-white/55 dark:border-white/10 dark:bg-white/5">
             {images.length ? (
               <img className="h-full max-h-[32rem] w-full object-contain p-8" src={images[activeImage]} alt={`${product.brand} ${product.name}, view ${activeImage + 1}`} />
@@ -919,8 +932,8 @@ function ScentProfileModal({ product, account, db, onClose, onRequireLogin }) {
             )}
           </div>
 
-          <button aria-label="Previous image" className="absolute left-7 top-[42%] rounded-full border border-ink/10 bg-white/90 p-3 shadow-lg transition enabled:hover:-translate-x-1 enabled:hover:text-ember disabled:cursor-not-allowed disabled:opacity-35 dark:border-white/10 dark:bg-zinc-900" disabled={images.length < 2} onClick={() => moveImage(-1)} type="button"><ChevronLeft className="h-5 w-5" /></button>
-          <button aria-label="Next image" className="absolute right-7 top-[42%] rounded-full border border-ink/10 bg-white/90 p-3 shadow-lg transition enabled:hover:translate-x-1 enabled:hover:text-ember disabled:cursor-not-allowed disabled:opacity-35 dark:border-white/10 dark:bg-zinc-900" disabled={images.length < 2} onClick={() => moveImage(1)} type="button"><ChevronRight className="h-5 w-5" /></button>
+          <button aria-label="Previous image" className="absolute left-7 top-[42%] rounded-full border border-ink/10 bg-white/90 p-3 shadow-lg transition enabled:hover:-translate-x-1 enabled:hover:text-ember disabled:cursor-not-allowed disabled:opacity-35 dark:border-white/10 dark:bg-charcoalPanel" disabled={images.length < 2} onClick={() => moveImage(-1)} type="button"><ChevronLeft className="h-5 w-5" /></button>
+          <button aria-label="Next image" className="absolute right-7 top-[42%] rounded-full border border-ink/10 bg-white/90 p-3 shadow-lg transition enabled:hover:translate-x-1 enabled:hover:text-ember disabled:cursor-not-allowed disabled:opacity-35 dark:border-white/10 dark:bg-charcoalPanel" disabled={images.length < 2} onClick={() => moveImage(1)} type="button"><ChevronRight className="h-5 w-5" /></button>
 
           <div className="mt-5 flex min-h-2 justify-center gap-2" aria-label={`${Math.max(images.length, 1)} image available`}>
             {Array.from({ length: Math.max(images.length, 1) }, (_, index) => (
@@ -948,7 +961,7 @@ function ScentProfileModal({ product, account, db, onClose, onRequireLogin }) {
 
         <div className="relative p-6 sm:p-9 lg:p-12">
           <div className="absolute right-5 top-5 flex gap-2">
-            <button aria-label="Full scent profile coming soon" className="rounded-full border border-ink/10 bg-white p-2.5 text-ink/35 dark:border-white/10 dark:bg-zinc-900 dark:text-white/35" disabled title="Full-page scent profiles are coming soon" type="button"><Maximize2 className="h-5 w-5" /></button>
+            <button aria-label="Full scent profile coming soon" className="rounded-full border border-ink/10 bg-white p-2.5 text-ink/35 dark:border-white/10 dark:bg-charcoalPanel dark:text-white/35" disabled title="Full-page scent profiles are coming soon" type="button"><Maximize2 className="h-5 w-5" /></button>
             <button aria-label="Close scent profile" className="rounded-full bg-ink p-2.5 text-white transition hover:rotate-90 hover:bg-ember dark:bg-white dark:text-ink" onClick={onClose} type="button"><X className="h-5 w-5" /></button>
           </div>
 
@@ -971,7 +984,7 @@ function ScentProfileModal({ product, account, db, onClose, onRequireLogin }) {
               {profile.accords.map((accord) => (
                 <div key={accord.label}>
                   <div className="mb-1.5 flex justify-between text-xs font-semibold"><span>{accord.label}</span><span className="text-ink/35 dark:text-white/35">{accord.value}%</span></div>
-                  <div className="h-2 overflow-hidden rounded-full bg-ink/8 dark:bg-white/10"><div className="h-full rounded-full bg-gradient-to-r from-ember to-orange-300" style={{ width: `${accord.value}%` }} /></div>
+                  <div className="h-2 rounded-full bg-ink/8 dark:bg-white/10"><div className="accord-fill bg-gradient-to-r from-ember to-orange-300 text-orange-300" style={{ width: `${accord.value}%` }} /></div>
                 </div>
               ))}
             </div>
@@ -997,8 +1010,8 @@ function ScentProfileModal({ product, account, db, onClose, onRequireLogin }) {
             <div className="mt-4 grid gap-x-6 gap-y-4 sm:grid-cols-2">
               {profile.wear.map((item) => (
                 <div className="grid grid-cols-[4.5rem_1fr] items-center gap-3" key={item.label}>
-                  <span className="rounded-lg border border-ink/10 bg-white px-2 py-1.5 text-center text-[11px] font-bold uppercase tracking-wide dark:border-white/10 dark:bg-zinc-900">{item.label}</span>
-                  <div className="h-2 overflow-hidden rounded-full bg-ink/8 dark:bg-white/10"><div className="h-full rounded-full bg-moss" style={{ width: `${item.value}%` }} /></div>
+                  <span className="rounded-lg border border-ink/10 bg-white px-2 py-1.5 text-center text-[11px] font-bold uppercase tracking-wide dark:border-white/10 dark:bg-charcoalPanel">{item.label}</span>
+                  <div className="h-2 rounded-full bg-ink/8 dark:bg-white/10"><div className="accord-fill bg-moss text-moss" style={{ width: `${item.value}%` }} /></div>
                 </div>
               ))}
             </div>
@@ -1007,7 +1020,7 @@ function ScentProfileModal({ product, account, db, onClose, onRequireLogin }) {
           <section className="mt-9">
             <div className="flex justify-between text-xs font-bold uppercase tracking-[0.18em] text-ink/45 dark:text-white/45"><span>Masculine</span><span>Feminine</span></div>
             <div className="relative mt-4 h-2 rounded-full bg-gradient-to-r from-slate-500 via-amber-100 to-rose-400">
-              <span className="absolute top-1/2 h-5 w-5 -translate-x-1/2 -translate-y-1/2 rounded-full border-4 border-white bg-ink shadow-md dark:border-zinc-950 dark:bg-white" style={{ left: `${profile.genderPosition}%` }} />
+              <span className="absolute top-1/2 h-5 w-5 -translate-x-1/2 -translate-y-1/2 rounded-full border-4 border-white bg-ink shadow-md dark:border-charcoal dark:bg-white" style={{ left: `${profile.genderPosition}%` }} />
             </div>
           </section>
         </div>
@@ -1041,8 +1054,8 @@ function AccountPage({
 
   if (!account) {
     return (
-      <main className="min-h-screen bg-cream px-4 pb-20 pt-32 dark:bg-zinc-950 sm:px-6 lg:px-8">
-        <div className="mx-auto grid max-w-6xl overflow-hidden rounded-[2.5rem] bg-white shadow-soft dark:bg-zinc-900 lg:grid-cols-[0.9fr_1.1fr]">
+      <main className="min-h-screen bg-cream px-4 pb-20 pt-32 dark:bg-charcoal sm:px-6 lg:px-8">
+        <div className="mx-auto grid max-w-6xl overflow-hidden rounded-[2.5rem] bg-white shadow-soft dark:bg-charcoalPanel lg:grid-cols-[0.9fr_1.1fr]">
           <section className="bg-ink p-8 text-white sm:p-12">
             <span className="inline-flex rounded-2xl bg-white/10 p-3"><Lock className="h-6 w-6 text-ember" /></span>
             <p className="mt-8 text-xs font-bold uppercase tracking-[0.3em] text-ember">Members only</p>
@@ -1064,7 +1077,7 @@ function AccountPage({
   }
 
   return (
-    <main className="min-h-screen bg-cream pt-20 dark:bg-zinc-950">
+    <main className="min-h-screen bg-cream pt-20 dark:bg-charcoal">
       <section className="bg-ink px-4 py-14 text-white sm:px-6 lg:px-8">
         <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-6">
           <div>
@@ -1103,7 +1116,7 @@ function AccountPage({
               ))}
             </div>
           ) : (
-            <div className="mt-7 rounded-[2rem] border border-dashed border-ink/15 bg-white p-10 text-center dark:border-white/15 dark:bg-zinc-900">
+            <div className="mt-7 rounded-[2rem] border border-dashed border-ink/15 bg-white p-10 text-center dark:border-white/15 dark:bg-charcoalPanel">
               <Heart className="mx-auto h-7 w-7 text-ember" />
               <p className="mt-4 font-semibold">Your wishlist is waiting for its first scent.</p>
             </div>
@@ -1136,9 +1149,9 @@ function AuthPanel({ notice, onAuth }) {
 
   return (
     <section className="p-8 sm:p-12">
-      <div className="flex rounded-full bg-mist p-1 dark:bg-zinc-800">
+      <div className="flex rounded-full bg-mist p-1 dark:bg-charcoalPanel/80">
         {[{ id: "login", label: "Log in" }, { id: "register", label: "Create account" }].map((option) => (
-          <button className={cx("flex-1 rounded-full px-4 py-3 text-sm font-bold transition", mode === option.id && "bg-white text-ember shadow-sm dark:bg-zinc-950")} key={option.id} onClick={() => { setMode(option.id); setError(""); }} type="button">{option.label}</button>
+          <button className={cx("flex-1 rounded-full px-4 py-3 text-sm font-bold transition", mode === option.id && "bg-white text-ember shadow-sm dark:bg-charcoal")} key={option.id} onClick={() => { setMode(option.id); setError(""); }} type="button">{option.label}</button>
         ))}
       </div>
       <h2 className="mt-8 font-display text-4xl">{mode === "login" ? "Good to see you again." : "Make the grove yours."}</h2>
@@ -1172,9 +1185,9 @@ function ProfilePanel({ brands, categories, genders, longevity, draftProfile, se
   };
 
   return (
-    <div id="profile-panel" className="scroll-mt-24 rounded-[2rem] border border-white/70 bg-white p-6 shadow-soft dark:border-white/10 dark:bg-zinc-900">
+    <div id="profile-panel" className="scroll-mt-24 rounded-[2rem] border border-white/70 bg-white p-6 shadow-soft dark:border-white/10 dark:bg-charcoalPanel">
       <div className="flex items-start gap-4">
-        <div className="rounded-2xl bg-ink p-3 text-white">
+        <div className="rounded-2xl bg-ink p-3 text-white ring-2 ring-gold/30">
           <UserRound className="h-6 w-6" />
         </div>
         <div>
@@ -1227,16 +1240,16 @@ function RecommendationPanel({ recommendations }) {
 
 function Community() {
   return (
-    <section id="community" className="flex min-h-screen items-center bg-white px-4 py-24 transition-colors sm:px-6 lg:px-8 dark:bg-zinc-900">
+    <section id="community" className="flex min-h-screen items-center bg-white px-4 py-24 transition-colors sm:px-6 lg:px-8 dark:bg-charcoalPanel">
       <div className="mx-auto grid w-full max-w-7xl items-center gap-12 lg:grid-cols-[0.85fr_1.15fr]">
         <div className="max-w-xl">
-          <p className="text-sm font-bold uppercase tracking-[0.28em] text-ember">Community</p>
+          <p className="eyebrow-moss">Community</p>
           <h2 className="mt-4 font-display text-5xl leading-tight sm:text-6xl">Fragrance is better when it is shared.</h2>
           <p className="mt-6 leading-8 text-ink/60 dark:text-white/60">A gathering place for personal stories, thoughtful recommendations and the scents that become part of our lives.</p>
         </div>
         <div className="grid gap-4 sm:grid-cols-2">
           {["Scent stories", "Shared collections", "House discoveries", "Community favourites"].map((item) => (
-            <div className="rounded-3xl bg-mist p-6 dark:bg-zinc-950" key={item}>
+            <div className="rounded-3xl border-t-2 border-moss/40 bg-moss/5 p-6 transition hover:bg-moss/10 dark:bg-mossDeep/50" key={item}>
               <Leaf className="mb-5 h-6 w-6 text-moss" />
               <h3 className="text-xl font-bold">{item}</h3>
               <p className="mt-3 leading-7 text-ink/60 dark:text-white/60">A new way to exchange inspiration and discover what others are wearing.</p>
@@ -1250,7 +1263,7 @@ function Community() {
 
 function AboutWithFooter() {
   return (
-    <section id="about" className="flex min-h-screen flex-col bg-cream transition-colors dark:bg-zinc-950">
+    <section id="about" className="flex min-h-screen flex-col bg-cream transition-colors dark:bg-charcoal">
       <div className="flex flex-1 items-center px-4 py-12 sm:px-6 lg:px-8">
         <div className="mx-auto grid w-full max-w-7xl items-center gap-12 lg:grid-cols-2">
           <div className="overflow-hidden rounded-t-[10rem]"><img className="h-[22rem] w-full object-cover" src="/images/banner/Story_Top_Banner.jpg" alt="The story of Elixir Grove" /></div>
@@ -1266,17 +1279,82 @@ function AboutWithFooter() {
   );
 }
 
+const socialLinks = [
+  {
+    label: "Email",
+    href: "mailto:charlesecnoleal@gmail.com",
+    icon: (
+      <svg aria-hidden="true" className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+        <rect x="3" y="5" width="18" height="14" rx="2" />
+        <path d="m3 7 9 6 9-6" />
+      </svg>
+    )
+  },
+  {
+    label: "Facebook",
+    href: "https://www.facebook.com/yKronos.017.341/",
+    icon: (
+      <svg aria-hidden="true" className="h-5 w-5" viewBox="0 0 24 24" fill="currentColor">
+        <path d="M14 8.6V7.1c0-.7.5-1.1 1.2-1.1H17V3.1c-.9-.1-1.8-.1-2.7-.1-2.7 0-4.5 1.6-4.5 4.5v1.1H7v3.2h2.8V21h3.4v-9.2h2.8l.5-3.2H14Z" />
+      </svg>
+    )
+  },
+  {
+    label: "GitHub",
+    href: "https://github.com/yKronos",
+    icon: (
+      <svg aria-hidden="true" className="h-5 w-5" viewBox="0 0 24 24" fill="currentColor">
+        <path d="M12 2a10 10 0 0 0-3.2 19.5c.5.1.7-.2.7-.5v-1.8c-2.9.6-3.5-1.2-3.5-1.2-.5-1.1-1.1-1.4-1.1-1.4-.9-.6.1-.6.1-.6 1 .1 1.6 1.1 1.6 1.1.9 1.5 2.4 1.1 3 .8.1-.7.4-1.1.7-1.4-2.3-.3-4.7-1.2-4.7-5A3.9 3.9 0 0 1 6.6 8.8c-.1-.3-.5-1.3.1-2.7 0 0 .9-.3 2.8 1a9.6 9.6 0 0 1 5.1 0c2-1.3 2.8-1 2.8-1 .6 1.4.2 2.4.1 2.7a3.9 3.9 0 0 1 1.1 2.8c0 3.9-2.4 4.7-4.7 5 .4.3.7 1 .7 2v2.9c0 .3.2.6.8.5A10 10 0 0 0 12 2Z" />
+      </svg>
+    )
+  },
+  {
+    label: "Instagram",
+    href: "https://www.instagram.com/imnotcharlesss/",
+    icon: (
+      <svg aria-hidden="true" className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+        <rect x="3" y="3" width="18" height="18" rx="5" />
+        <circle cx="12" cy="12" r="4" />
+        <path d="M17.5 6.5h.01" />
+      </svg>
+    )
+  },
+  {
+    label: "TikTok",
+    href: "https://www.tiktok.com/@yesimnotcharles?is_from_webapp=1&sender_device=pc",
+    icon: (
+      <svg aria-hidden="true" className="h-5 w-5" viewBox="0 0 24 24" fill="currentColor">
+        <path d="M15.7 3c.4 2.4 1.8 3.9 4.3 4.1v3.1a7 7 0 0 1-4.2-1.3v6.3c0 3.2-2.3 5.8-5.7 5.8-3.2 0-5.8-2.1-5.8-5.2 0-3.6 3.3-6.2 7-5.4v3.3c-1.7-.5-3.6.4-3.6 2.1 0 1.3 1.1 2.1 2.4 2.1 1.5 0 2.3-1 2.3-2.5V3h3.3Z" />
+      </svg>
+    )
+  }
+];
+
 function Footer() {
   return (
-    <footer className="bg-ink px-4 py-10 text-white sm:px-6 lg:px-8">
-      <div className="mx-auto flex max-w-7xl flex-col justify-between gap-6 sm:flex-row sm:items-center">
+    <footer className="relative overflow-hidden bg-ink px-4 py-10 text-white sm:px-6 lg:px-8">
+      <img aria-hidden="true" className="pointer-events-none absolute -bottom-40 left-1/2 w-[36rem] -translate-x-1/2 opacity-[0.05] invert" src="/elixirgrove-logo.png" />
+      <div className="relative mx-auto flex max-w-7xl flex-col justify-between gap-6 sm:flex-row sm:items-center">
         <div>
           <p className="font-display text-3xl">Elixir Grove</p>
           <p className="mt-2 text-white/50">Find the fragrance that feels unmistakably yours.</p>
+          <p className="mt-3 text-xs font-semibold uppercase tracking-[0.22em] text-white/35">Created 2024</p>
         </div>
-        <a className="text-white/70 transition hover:text-ember" href="mailto:charlesecnoleal@gmail.com">
-          charlesecnoleal@gmail.com
-        </a>
+        <div className="flex items-center gap-3">
+          {socialLinks.map((link) => (
+            <a
+              aria-label={link.label}
+              className="flex h-11 w-11 items-center justify-center rounded-full border border-white/10 bg-white/5 text-white/70 transition hover:-translate-y-1 hover:border-gold/50 hover:bg-gold/10 hover:text-gold"
+              href={link.href}
+              key={link.label}
+              rel="noreferrer"
+              target="_blank"
+              title={link.label}
+            >
+              {link.icon}
+            </a>
+          ))}
+        </div>
       </div>
     </footer>
   );

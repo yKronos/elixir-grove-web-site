@@ -6,10 +6,15 @@ export default {
     extend: {
       colors: {
         ink: "#17130f",
-        ember: "#f6692a",
+        ember: "#e8672a",
+        emberDeep: "#b8511f",
         cream: "#fff8ef",
         mist: "#f6f1ea",
-        moss: "#3d4a37"
+        moss: "#3d4a37",
+        mossDeep: "#2b3527",
+        gold: "#b8935a",
+        charcoal: "#1c1815",
+        charcoalPanel: "#241f1a"
       },
       fontFamily: {
         display: ["Yeseva One", "Georgia", "serif"],
